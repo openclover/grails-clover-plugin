@@ -1,0 +1,1 @@
+//grails.compiler.dependencies = { fileset(dir:'lib', includes:'grover.jar') }
