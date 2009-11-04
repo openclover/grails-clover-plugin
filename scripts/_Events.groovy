@@ -16,8 +16,10 @@ eventSetClasspath = {URLClassLoader rootLoader ->
   println "Clover plugin base dir: ${cloverPluginDir}"
   argsMap = parseArguments()
 
+  final def clover = buildConfig.clover
+
   // get any BuildListeners and turn logging on
-  if (argsMap.debug || buildConfig.clover.debug) {
+  if (argsMap.debug || clover.debug) {
     ant.project.buildListeners.each {listener ->
       if (listener instanceof BuildLogger) {
         listener.messageOutputLevel = Project.MSG_DEBUG
@@ -27,7 +29,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   LICENSE_PROP = 'clover.license.path'
 
-  if (buildConfig.clover.license.path) {
+  if (clover.license.path) {
     System.setProperty LICENSE_PROP, buildConfig.clover.license.path
   } else {
     // TODO: by default, look in this directory, then look in the GRAILS_HOME/clover.license, then warn?
@@ -38,7 +40,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
   println "Using clover license path: ${System.getProperty LICENSE_PROP}"
 
 
-  if (argsMap.enabled || buildConfig.clover.enabled) {
+  if (cloverIsOn()) {
 
     System.setProperty LICENSE_PROP, buildConfig.clover.license.path
 
@@ -48,6 +50,11 @@ eventSetClasspath = {URLClassLoader rootLoader ->
   }
 
 }
+
+boolean cloverIsOn() {
+  argsMap.clover || buildConfig.clover.enabled
+}
+
 
 // Copied from _GrailsArgParsing.groovy since _GrailsCompile.groovy does not depend on parseArguments target
 // and the argsMap is not populated in time for the testStart event.
