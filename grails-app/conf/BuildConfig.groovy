@@ -1,3 +1,6 @@
+
+
+
 clover {
   debug = false;
   enabled = false;
@@ -5,11 +8,7 @@ clover {
   license.path = "clover.license"
 }
 
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir = "target/test-reports"
-
-
+grails.project.work.dir="build"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies  
