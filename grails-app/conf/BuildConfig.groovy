@@ -9,6 +9,8 @@ clover {
 }
 
 grails.project.work.dir="build"
+grails.project.test.reports.dir="build/test"
+
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies  
