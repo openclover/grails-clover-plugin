@@ -30,7 +30,7 @@ ConfigObject mergeConfig() {
   props.putAll(argsMap)
 
   final ConfigObject argsMapConfig = slurper.parse(props)
-  config.merge(argsMapConfig)
+  config.merge(argsMapConfig.clover)
 
   return config
 
@@ -40,13 +40,13 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   println "Clover plugin base dir: ${cloverPluginDir}"
 
-  ConfigObject clover = mergeConfig()
-  println "Using Clover Config: ${clover}"
+  ConfigObject config = mergeConfig()
+  println "Using Clover Config: ${config}"
 
-  toggleAntLogging(clover)
+  toggleAntLogging(config)
 
-  if (clover.enabled) {
-    toggleCloverOn(clover)
+  if (config.enabled) {
+    toggleCloverOn(config)
   }
 
 }
