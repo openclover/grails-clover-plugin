@@ -5,7 +5,8 @@ clover {
   debug = false;
   enabled = false;
   core.version = 'com.cenqua.clover:clover:2.6.3-SNAPSHOT';
-  license.path = "clover.license"
+//  license.path = "clover.license"
+
 }
 
 grails.project.work.dir="build"
@@ -16,22 +17,21 @@ grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies  
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
-        grailsHome()
 
-        // uncomment the below to enable remote dependency resolution
-        // from public Maven repositories
-        mavenLocal() 
-        mavenCentral()
-        mavenRepo "https://maven.atlassian.com/private-snapshot"
-
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/
+        grailsPlugins() // plugins should first look in their lib dir
+        flatDir name:'clover-ant', dirs:'../build/clover-ant' // when building this plugin, look in build/clover-ant
+        mavenLocal() // otherwise look in the local maven repo
     }
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
          build clover.core.version
          runtime clover.core.version
+    }
+    credentials {
+          realm = 'maven.atlassian.com'
+          host = 'maven.atlassian.com'
+          username = '' // TODO: have these passed from the command line somehow
+          password = ''
     }
 
 }

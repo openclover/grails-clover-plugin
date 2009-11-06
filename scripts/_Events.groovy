@@ -1,5 +1,10 @@
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
+import groovy.util.ConfigObject
+import com.cenqua.clover.tasks.AntInstrumentationConfig
+import com.cenqua.clover.CloverNames
+
+
 
 eventStatusFinal = {msg ->
   // TODO: generate a Clover report here
@@ -11,55 +16,137 @@ eventCompileStart = {kind ->
   println "Compile start."
 }
 
+
+/**
+ * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
+ */
+ConfigObject mergeConfig() {
+
+  final Map argsMap = parseArguments()
+  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
+
+  final ConfigSlurper slurper = new ConfigSlurper()
+  final Properties props = new Properties()
+  props.putAll(argsMap)
+
+  final ConfigObject argsMapConfig = slurper.parse(props)
+  config.merge(argsMapConfig)
+
+  return config
+
+}
+
 eventSetClasspath = {URLClassLoader rootLoader ->
 
   println "Clover plugin base dir: ${cloverPluginDir}"
-  argsMap = parseArguments()
 
-  final def clover = buildConfig.clover
+  ConfigObject clover = mergeConfig()
+  println "Using Clover Config: ${clover}"
 
-  // get any BuildListeners and turn logging on
-  if (argsMap.debug || clover.debug) {
+  toggleAntLogging(clover)
+
+  if (clover.enabled) {
+    toggleCloverOn(clover)
+  }
+
+}
+
+private def toggleCloverOn(ConfigObject clover) {
+
+
+  configureLicense(clover)
+  
+  ant.taskdef(resource: 'cloverlib.xml')
+  ant.'clover-env'()
+  ant.'clover-setup'()
+
+  // create an AntInstrumentationConfig object, and set this on the ant project
+  AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
+
+  configureAntInstr(clover, antConfig)
+  ant.project.addReference CloverNames.PROP_CONFIG, antConfig
+
+}
+
+
+/**
+ * Populates an AntInstrumentationConfig instance with any matching properties in the ConfigObject.
+ *
+ * Currently only primitive boolean, int and long are supported.
+ * As are String.
+ *
+ */
+private def configureAntInstr(ConfigObject clover, AntInstrumentationConfig antConfig) {
+
+  return clover.each {
+
+    if (antConfig.getProperties().containsKey(it.key)) {
+
+      String setter = MetaProperty.getSetterName(it.key)
+      MetaProperty property = antConfig.metaClass.getMetaProperty(it.key.toString())
+
+      final def val;
+      switch (property.type) {
+        case Integer.class.getPrimitiveClass("int"):
+          val = it.value.toInteger()
+          break;
+        case Long.class.getPrimitiveClass("long"):
+          val = it.value.toLong()
+          break;
+        default:
+          val = it.value
+      }
+      
+      antConfig.invokeMethod(setter, val)
+    }
+  }
+}
+
+private def configureLicense(ConfigObject clover) {
+// the directories to search for a clover.license file
+  final String[] licenseSearchPaths = ["${userHome}", "${basedir}", "${basedir}/etc", "${grailsWorkDir}"]
+
+  // the name of the system property that holds the clover license file
+  final LICENSE_PROP = 'clover.license.path'
+
+  final license;
+  if (clover.license.path) {
+    license = clover.license.path
+  } else {
+
+    licenseSearchPaths.each {
+
+      final String licensePath = "${it}/clover.license"
+      if (new File(licensePath).exists()) {
+        license = licensePath;
+      }
+    }
+  }
+
+  if (!license) {
+    println """No clover.license configured. Please define license.path=/path/to/clover.license in the
+               clover configuration in conf/BuildConfig.groovy"""
+  } else {
+    System.setProperty LICENSE_PROP, license
+    println "Using clover license path: ${System.getProperty LICENSE_PROP}"
+  }
+}
+
+private void toggleAntLogging(ConfigObject clover) {
+// get any BuildListeners and turn logging on
+  if (clover.debug) {
     ant.project.buildListeners.each {listener ->
       if (listener instanceof BuildLogger) {
         listener.messageOutputLevel = Project.MSG_DEBUG
       }
     }
   }
-
-  LICENSE_PROP = 'clover.license.path'
-
-  if (clover.license.path) {
-    System.setProperty LICENSE_PROP, buildConfig.clover.license.path
-  } else {
-    // TODO: by default, look in this directory, then look in the GRAILS_HOME/clover.license, then warn?
-    println """No clover.license configured. Please define license.path=/path/to/clover.license in the
-               clover configuration in conf/BuildConfig.groovy"""
-  }
-
-  println "Using clover license path: ${System.getProperty LICENSE_PROP}"
-
-
-  if (cloverIsOn()) {
-
-    System.setProperty LICENSE_PROP, buildConfig.clover.license.path
-
-    ant.taskdef(resource: 'cloverlib.xml')
-    ant.'clover-env'()
-    ant.'clover-setup'()
-  }
-
 }
-
-boolean cloverIsOn() {
-  argsMap.clover || buildConfig.clover.enabled
-}
-
 
 // Copied from _GrailsArgParsing.groovy since _GrailsCompile.groovy does not depend on parseArguments target
 // and the argsMap is not populated in time for the testStart event.
 // see: http://jira.codehaus.org/browse/GRAILS-2663
-def parseArguments() {
+private Map parseArguments() {
   // Only ever parse the arguments once. We also don't bother parsing
   // the arguments if the "args" string is empty.
 //    if (argsMap.size() > 1 || argsMap["params"] || !args) return
