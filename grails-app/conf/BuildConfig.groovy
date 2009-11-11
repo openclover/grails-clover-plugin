@@ -1,11 +1,13 @@
 
-
-
 clover {
   debug = false;
   enabled = false;
   core.version = 'com.cenqua.clover:clover:2.6.3-SNAPSHOT';
 //  license.path = "clover.license"
+
+  srcDirs = []
+  includes = []
+  excludes = []
 
 }
 

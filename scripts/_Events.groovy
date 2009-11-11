@@ -2,9 +2,12 @@ import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 import groovy.util.ConfigObject
 import com.cenqua.clover.tasks.AntInstrumentationConfig
-import com.cenqua.clover.CloverNames
 
 
+
+srcDirs = ["src", "grails-app"];
+includes = ["**/*.groovy", "**/*.java"];
+excludes = ["conf/**", "**/plugins/**"];
 
 eventStatusFinal = {msg ->
   // TODO: generate a Clover report here
@@ -63,8 +66,45 @@ private def toggleCloverOn(ConfigObject clover) {
   // create an AntInstrumentationConfig object, and set this on the ant project
   AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
 
+  // configure any filesets, patternsets ,testsources
+  if (clover.srcDirs) {println "Clover srcDirs is enabled!"}
+  
+  println "Clover fileset: ${clover.srcDirs}"
+
+  if (clover.srcDirs) {
+    srcDirs.addAll(clover.srcDirs)
+  }
+
+  if (clover.includes) {
+    includes.addAll(clover.includes)
+  }
+
+  if (clover.excludes) {
+    excludes.addAll(clover.excludes)
+  }
+  
+  srcDirs.each {dir ->
+  
+    antConfig.addFileset ant.fileset(dir: dir) {
+      println "FileSet for Dir: ${dir}"
+      excludes.each {
+        println "Adding exclude: ${it}"
+        exclude(name: it)
+      }
+      includes.each {
+        println "Adding include: ${it}"
+        include(name: it)
+      }
+    }
+    
+  }
+
+  println "Filesets: ${antConfig.getInstrFilesets()}"
+
+
   configureAntInstr(clover, antConfig)
-  ant.project.addReference CloverNames.PROP_CONFIG, antConfig
+  antConfig.setIn ant.project
+  
 
 }
 
@@ -115,10 +155,10 @@ private def configureLicense(ConfigObject clover) {
   } else {
 
     licenseSearchPaths.each {
-
       final String licensePath = "${it}/clover.license"
       if (new File(licensePath).exists()) {
         license = licensePath;
+        return;
       }
     }
   }
