@@ -2,6 +2,10 @@ package org.grails.samples;
 
 class PetController {
 
+  static void sayHello() {
+    println "Say Hello..."
+  }
+
 	def add = {
 		if(request.method == 'GET') {
 			[pet: new Pet(owner: Owner.get(params['owner']?.id)), types: PetType.list() ]

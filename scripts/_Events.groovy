@@ -5,7 +5,9 @@ import com.cenqua.clover.tasks.AntInstrumentationConfig
 
 
 
-srcDirs = ["src", "grails-app"];
+srcDirs = ["src/java", "src/groovy",
+           "grails-app/controllers", "grails-app/domain", "grails-app/services", "grails-app/utils", "grails-app/taglib"];
+
 includes = ["**/*.groovy", "**/*.java"];
 excludes = ["conf/**", "**/plugins/**"];
 
@@ -67,9 +69,6 @@ private def toggleCloverOn(ConfigObject clover) {
   AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
 
   // configure any filesets, patternsets ,testsources
-  if (clover.srcDirs) {println "Clover srcDirs is enabled!"}
-  
-  println "Clover fileset: ${clover.srcDirs}"
 
   if (clover.srcDirs) {
     srcDirs.addAll(clover.srcDirs)
@@ -84,17 +83,10 @@ private def toggleCloverOn(ConfigObject clover) {
   }
   
   srcDirs.each {dir ->
-  
-    antConfig.addFileset ant.fileset(dir: dir) {
-      println "FileSet for Dir: ${dir}"
-      excludes.each {
-        println "Adding exclude: ${it}"
-        exclude(name: it)
-      }
-      includes.each {
-        println "Adding include: ${it}"
-        include(name: it)
-      }
+
+      antConfig.addFileset ant.fileset(dir: dir) {
+        excludes.each { exclude(name: it) }
+        includes.each { include(name: it) }
     }
     
   }
@@ -103,6 +95,7 @@ private def toggleCloverOn(ConfigObject clover) {
 
 
   configureAntInstr(clover, antConfig)
+  antConfig.tmpDir = new File("${projectWorkDir}/clover/tmp")
   antConfig.setIn ant.project
   
 
