@@ -17,7 +17,7 @@ class CloverGrailsPlugin {
 
     // TODO Fill in these fields
     def author = "Atlassian"
-    def authorEmail = "npellow@atlassian.com"
+    def authorEmail = "support@atlassian.com"
     def title = "Clover for Grails"
     def description = '''\\
 A plugin that integrates Clover into GRAILS projects.

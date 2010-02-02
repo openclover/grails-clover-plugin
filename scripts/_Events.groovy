@@ -13,7 +13,18 @@ excludes = ["conf/**", "**/plugins/**"];
 
 eventStatusFinal = {msg ->
   // TODO: generate a Clover report here
-  println msg
+  println "Final status ${msg}"
+}
+
+
+eventTestPhasesEnd = {
+  ConfigObject config = mergeConfig()
+  println "Tests ended"
+
+  if (config.enabled) {
+    ant.'clover-html-report'(outdir:"build/clover/report")
+  }
+  
 }
 
 eventCompileStart = {kind ->
@@ -24,7 +35,7 @@ eventCompileStart = {kind ->
 
 /**
  * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
- */
+ */ 
 ConfigObject mergeConfig() {
 
   final Map argsMap = parseArguments()
