@@ -2,54 +2,21 @@ import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 import groovy.util.ConfigObject
 import com.cenqua.clover.tasks.AntInstrumentationConfig
+import com_cenqua_clover.CloverBean
 
 
 
-srcDirs = ["src/java", "src/groovy",
+srcDirs = ["src/java", "src/groovy", "test",
            "grails-app/controllers", "grails-app/domain", "grails-app/services", "grails-app/utils", "grails-app/taglib"];
 
 includes = ["**/*.groovy", "**/*.java"];
 excludes = ["conf/**", "**/plugins/**"];
 
-eventStatusFinal = {msg ->
-  // TODO: generate a Clover report here
-  println "Final status ${msg}"
-}
 
-
-eventTestPhasesEnd = {
-  ConfigObject config = mergeConfig()
-  println "Tests ended"
-
-  if (config.enabled) {
-    ant.'clover-html-report'(outdir:"build/clover/report")
-  }
-  
-}
 
 eventCompileStart = {kind ->
   // Ants Project is available via: kind.ant.project
   println "Compile start."
-}
-
-
-/**
- * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
- */ 
-ConfigObject mergeConfig() {
-
-  final Map argsMap = parseArguments()
-  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
-
-  final ConfigSlurper slurper = new ConfigSlurper()
-  final Properties props = new Properties()
-  props.putAll(argsMap)
-
-  final ConfigObject argsMapConfig = slurper.parse(props)
-  config.merge(argsMapConfig.clover)
-
-  return config
-
 }
 
 eventSetClasspath = {URLClassLoader rootLoader ->
@@ -63,18 +30,55 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   if (config.enabled) {
     toggleCloverOn(config)
+    // force a clean
+    println "Forcing a clean"
+
+    if (!config.preserve) {
+      ant.delete(dir:"build/classes")
+      ant.delete(dir:"build/test-classes")
+      ant.delete(dir:"build/clover")
+    }
   }
 
 }
 
-private def toggleCloverOn(ConfigObject clover) {
+eventStatusFinal = {msg ->
 
+}
+
+
+eventTestPhasesEnd = {
+  ConfigObject config = mergeConfig()
+  println "Tests ended"
+
+  if (config.enabled) {
+    // force a flush of coverage data as soon as the tests finish:
+    println "Forcing flush of coverage data."
+    new CloverBean().flush();
+
+    // TODO: save a hostory point?
+    
+    // generate a report
+    ant.'clover-html-report'(outdir:config.reportdir ?: "build/clover/report")
+
+    // generate a user defined report..
+    println "Report Closure: " + config.reporttask
+
+    // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
+    // this closure can be used to generate a custom html report.
+    // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
+    config.reporttask(ant)
+  }
+}
+
+
+private def toggleCloverOn(ConfigObject clover) {
 
   configureLicense(clover)
   
   ant.taskdef(resource: 'cloverlib.xml')
   ant.'clover-env'()
-  ant.'clover-setup'()
+  ant.'clover-setup'(initString: "build/clover/db/clover.db")
 
   // create an AntInstrumentationConfig object, and set this on the ant project
   AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
@@ -108,10 +112,29 @@ private def toggleCloverOn(ConfigObject clover) {
   configureAntInstr(clover, antConfig)
   antConfig.tmpDir = new File("${projectWorkDir}/clover/tmp")
   antConfig.setIn ant.project
-  
 
 }
 
+
+
+/**
+ * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
+ */
+private def ConfigObject mergeConfig() {
+
+  final Map argsMap = parseArguments()
+  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
+
+  final ConfigSlurper slurper = new ConfigSlurper()
+  final Properties props = new Properties()
+  props.putAll(argsMap)
+
+  final ConfigObject argsMapConfig = slurper.parse(props)
+  config.merge(argsMapConfig.clover)
+
+  return config
+
+}
 
 /**
  * Populates an AntInstrumentationConfig instance with any matching properties in the ConfigObject.

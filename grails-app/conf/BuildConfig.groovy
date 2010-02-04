@@ -21,13 +21,13 @@ grails.project.dependency.resolution = {
     repositories {
 
         grailsPlugins() // plugins should first look in their lib dir
-        flatDir name:'clover-ant', dirs:'../build/clover-ant' // when building this plugin, look in build/clover-ant
+        flatDir name:'clover', dirs:'../build/clover-ant' // when building this plugin, look in build/clover-ant
         mavenLocal() // otherwise look in the local maven repo
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
-         build clover.core.version
-         runtime clover.core.version
+         build name = clover.core.version, force = true, changing = true
+         runtime clover.core.version, force = true, changing = true
     }
     credentials {
           realm = 'maven.atlassian.com'
