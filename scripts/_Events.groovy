@@ -17,6 +17,7 @@ excludes = ["conf/**", "**/plugins/**"];
 eventCompileStart = {kind ->
   // Ants Project is available via: kind.ant.project
   println "Compile start."
+  System.setProperty("grover.ast.dump", "true")
 }
 
 eventSetClasspath = {URLClassLoader rootLoader ->
@@ -34,18 +35,33 @@ eventSetClasspath = {URLClassLoader rootLoader ->
     println "Forcing a clean"
 
     if (!config.preserve) {
-      ant.delete(dir:"build/classes")
-      ant.delete(dir:"build/test-classes")
-      ant.delete(dir:"build/clover")
+          def webInf = "${basedir}/web-app/WEB-INF"
+          ant.delete(dir:"${webInf}/classes")
+          ant.delete(file:webXmlFile.absolutePath, failonerror:false)
+          ant.delete(dir:"${projectWorkDir}/gspcompile", failonerror:false)
+          ant.delete(dir:"${webInf}/lib")
+          ant.delete(dir:"${basedir}/web-app/plugins")
+          ant.delete(dir:classesDirPath)
+          ant.delete(dir:resourcesDirPath)
+          ant.delete(dir:testDirPath)
     }
   }
+}
+
+// copied from $GRAILS_HOME/scripts/_GrailsClean.groovy
+private def cleanCompiledSources() {
 
 }
+
+
 
 eventStatusFinal = {msg ->
 
 }
 
+eventTestPhasesStart = {
+
+}
 
 eventTestPhasesEnd = {
   ConfigObject config = mergeConfig()
@@ -54,9 +70,8 @@ eventTestPhasesEnd = {
   if (config.enabled) {
     // force a flush of coverage data as soon as the tests finish:
     println "Forcing flush of coverage data."
-    new CloverBean().flush();
-
-    // TODO: save a hostory point?
+    
+    // TODO: save a history point?
     
     // generate a report
     ant.'clover-html-report'(outdir:config.reportdir ?: "build/clover/report")

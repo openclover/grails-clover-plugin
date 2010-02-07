@@ -26,8 +26,8 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
-         build name = clover.core.version, force = true, changing = true
-         runtime clover.core.version, force = true, changing = true
+         build name = clover.core.version, force = true, changing = true, checkModified=true
+         runtime clover.core.version, force = true, changing = true, checkModified=true
     }
     credentials {
           realm = 'maven.atlassian.com'

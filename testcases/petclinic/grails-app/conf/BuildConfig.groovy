@@ -1,6 +1,7 @@
 grails.project.work.dir="build"
 grails.project.test.reports.dir="build/test"
 
+grails.plugin.location.jsecurity = "../../"
 
 clover {
   enabled = false
