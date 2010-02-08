@@ -1,8 +1,7 @@
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
-import groovy.util.ConfigObject
+
 import com.cenqua.clover.tasks.AntInstrumentationConfig
-import com_cenqua_clover.CloverBean
 
 
 
@@ -15,9 +14,14 @@ excludes = ["conf/**", "**/plugins/**"];
 
 
 eventCompileStart = {kind ->
+  ConfigObject config = mergeConfig()
   // Ants Project is available via: kind.ant.project
   println "Compile start."
-  System.setProperty("grover.ast.dump", "true")
+
+  binding.variables.each { println it.key }
+
+  System.setProperty "grover.ast.dump", "" + config.dumpAST
+
 }
 
 eventSetClasspath = {URLClassLoader rootLoader ->
@@ -31,10 +35,11 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   if (config.enabled) {
     toggleCloverOn(config)
-    // force a clean
-    println "Forcing a clean"
 
     if (!config.preserve) {
+          // force a clean
+          println "Forcing a clean"
+
           def webInf = "${basedir}/web-app/WEB-INF"
           ant.delete(dir:"${webInf}/classes")
           ant.delete(file:webXmlFile.absolutePath, failonerror:false)
@@ -44,6 +49,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
           ant.delete(dir:classesDirPath)
           ant.delete(dir:resourcesDirPath)
           ant.delete(dir:testDirPath)
+          ant.delete(dir:"${projectWorkDir}/clover")
     }
   }
 }
