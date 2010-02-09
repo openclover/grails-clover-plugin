@@ -18,7 +18,7 @@ eventCompileStart = {kind ->
   // Ants Project is available via: kind.ant.project
   println "Compile start."
 
-  binding.variables.each { println it.key }
+//  binding.variables.each { println "${it.key} ${it.value}"} // dumps all available vars and their values
 
   System.setProperty "grover.ast.dump", "" + config.dumpAST
 
@@ -59,8 +59,6 @@ private def cleanCompiledSources() {
 
 }
 
-
-
 eventStatusFinal = {msg ->
 
 }
@@ -73,23 +71,23 @@ eventTestPhasesEnd = {
   ConfigObject config = mergeConfig()
   println "Tests ended"
 
-  if (config.enabled) {
-    // force a flush of coverage data as soon as the tests finish:
-    println "Forcing flush of coverage data."
-    
-    // TODO: save a history point?
-    
+  if (!config.enabled) {
+    return;
+  }
+
+  // TODO: save a history point?
+
+  if (!config.reporttask) {
     // generate a report
     ant.'clover-html-report'(outdir:config.reportdir ?: "build/clover/report")
-
-    // generate a user defined report..
-    println "Report Closure: " + config.reporttask
+  } else {
 
     // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
     // this closure can be used to generate a custom html report.
     // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
     config.reporttask(ant)
   }
+
 }
 
 
@@ -127,11 +125,9 @@ private def toggleCloverOn(ConfigObject clover) {
     
   }
 
-  println "Filesets: ${antConfig.getInstrFilesets()}"
-
-
   configureAntInstr(clover, antConfig)
   antConfig.tmpDir = new File("${projectWorkDir}/clover/tmp")
+  
   antConfig.setIn ant.project
 
 }
@@ -180,6 +176,9 @@ private def configureAntInstr(ConfigObject clover, AntInstrumentationConfig antC
           break;
         case Long.class.getPrimitiveClass("long"):
           val = it.value.toLong()
+          break;
+        case Boolean.class.getPrimitiveClass("boolean"):
+          val = (it.value == null || Boolean.parseBoolean(it.value.toString()))
           break;
         default:
           val = it.value
@@ -243,7 +242,8 @@ private Map parseArguments() {
   args?.tokenize().each {token ->
     def nameValueSwitch = token =~ "--?(.*)=(.*)"
     if (nameValueSwitch.matches()) { // this token is a name/value pair (ex: --foo=bar or -z=qux)
-      argsMap[nameValueSwitch[0][1]] = nameValueSwitch[0][2]
+      final def value = nameValueSwitch[0][2]
+      argsMap[nameValueSwitch[0][1]] = "false".equalsIgnoreCase(value) ? false : value; 
     }
     else {
       def nameOnlySwitch = token =~ "--?(.*)"

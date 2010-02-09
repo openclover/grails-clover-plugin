@@ -4,8 +4,7 @@ grails.project.test.reports.dir="build/test"
 grails.plugin.location.jsecurity = "../../"
 
 clover {
-  enabled = false
-
+  
   // example Custom Clover Report configuration:
   // reporttask is a closure that gets passed a reference to the GantBuilder object.
   // any of Clover's report tasks, in fact any Ant Task, can be included.
