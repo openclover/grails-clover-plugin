@@ -85,7 +85,7 @@ eventTestPhasesEnd = {
     // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
     // this closure can be used to generate a custom html report.
     // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
-    config.reporttask(ant)
+    config.reporttask(ant, binding)
   }
 
 }
@@ -97,7 +97,14 @@ private def toggleCloverOn(ConfigObject clover) {
   
   ant.taskdef(resource: 'cloverlib.xml')
   ant.'clover-env'()
-  ant.'clover-setup'(initString: "build/clover/db/clover.db")
+
+  if (clover.setuptask) {
+    println "Using custom clover-setup configuration."
+    clover.setuptask(ant, binding)
+  } else {
+    println "Using default clover-setup configuration."
+    ant.'clover-setup'(initString: clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db")
+  }
 
   // create an AntInstrumentationConfig object, and set this on the ant project
   AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
@@ -127,12 +134,10 @@ private def toggleCloverOn(ConfigObject clover) {
 
   configureAntInstr(clover, antConfig)
   antConfig.tmpDir = new File("${projectWorkDir}/clover/tmp")
-  
+
   antConfig.setIn ant.project
 
 }
-
-
 
 /**
  * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
@@ -162,7 +167,7 @@ private def ConfigObject mergeConfig() {
  */
 private def configureAntInstr(ConfigObject clover, AntInstrumentationConfig antConfig) {
 
-  return clover.each {
+   return clover.each {
 
     if (antConfig.getProperties().containsKey(it.key)) {
 
