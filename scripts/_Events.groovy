@@ -9,8 +9,7 @@ srcDirs = ["src/java", "src/groovy", "test",
            "grails-app/controllers", "grails-app/domain", "grails-app/services", "grails-app/utils", "grails-app/taglib"];
 
 includes = ["**/*.groovy", "**/*.java"];
-excludes = ["conf/**", "**/plugins/**"];
-
+excludes = ["**/conf/**", "**/plugins/**"];
 
 
 eventCompileStart = {kind ->
@@ -28,12 +27,15 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   println "Clover plugin base dir: ${cloverPluginDir}"
 
+//  grailsSettings.compileDependencies.each { println it }
+  
   ConfigObject config = mergeConfig()
   println "Using Clover Config: ${config}"
 
   toggleAntLogging(config)
 
   if (config.enabled) {
+
     toggleCloverOn(config)
 
     if (!config.preserve) {
@@ -90,7 +92,6 @@ eventTestPhasesEnd = {
 
 }
 
-
 private def toggleCloverOn(ConfigObject clover) {
 
   configureLicense(clover)
@@ -98,45 +99,38 @@ private def toggleCloverOn(ConfigObject clover) {
   ant.taskdef(resource: 'cloverlib.xml')
   ant.'clover-env'()
 
+  // create an AntInstrumentationConfig object, and set this on the ant project
+  AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
+  configureAntInstr(clover, antConfig)
+  antConfig.setIn ant.project
+
   if (clover.setuptask) {
     println "Using custom clover-setup configuration."
+
     clover.setuptask(ant, binding)
   } else {
     println "Using default clover-setup configuration."
-    ant.'clover-setup'(initString: clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db")
-  }
 
-  // create an AntInstrumentationConfig object, and set this on the ant project
-  AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
+    final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
+    antConfig.initstring = initString
+    ant.'clover-setup'()
 
-  // configure any filesets, patternsets ,testsources
+    ant.'clover-setup'(initString: initString, tmpDir: "${projectWorkDir}/clover/tmp") {
 
-  if (clover.srcDirs) {
-    srcDirs.addAll(clover.srcDirs)
-  }
+        srcDirs.each {dir ->
+          ant.fileset(dir: dir) {
+            excludes.each { exclude(name: it) }
+            includes.each { include(name: it) }
+          }
+          println "DIR: ${dir} added includes: ${includes}, excludes ${excludes}"
+        }
 
-  if (clover.includes) {
-    includes.addAll(clover.includes)
-  }
 
-  if (clover.excludes) {
-    excludes.addAll(clover.excludes)
-  }
-  
-  srcDirs.each {dir ->
-
-      antConfig.addFileset ant.fileset(dir: dir) {
-        excludes.each { exclude(name: it) }
-        includes.each { include(name: it) }
+        ant.fileset(dir:'grails-app', includes:'**/*.groovy', excludes: '**/conf/**, **/plugins/**')
+        ant.fileset(dir:'src', includes:'**/*.groovy, **/*.java')
     }
     
   }
-
-  configureAntInstr(clover, antConfig)
-  antConfig.tmpDir = new File("${projectWorkDir}/clover/tmp")
-
-  antConfig.setIn ant.project
-
 }
 
 /**
