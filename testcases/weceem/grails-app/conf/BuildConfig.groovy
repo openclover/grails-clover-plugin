@@ -1,3 +1,6 @@
+
+grails.plugin.location.clover = "../../"
+
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails default dependencies
     
