@@ -1,0 +1,3 @@
+Clover is a closed, commercial product.
+It is free for use for Open Source projects and non-profit organisations.
+For more information on Clover's licensing see: http://www.atlassian.com/software/clover/licensing.jsp
