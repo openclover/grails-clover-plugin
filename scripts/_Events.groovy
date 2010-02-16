@@ -4,18 +4,18 @@ import org.apache.tools.ant.Project
 import com.cenqua.clover.tasks.AntInstrumentationConfig
 
 
+private static class Defaults {
 
-srcDirs = ["src/java", "src/groovy", "test",
-           "grails-app/controllers", "grails-app/domain", "grails-app/services", "grails-app/utils", "grails-app/taglib"];
-
-includes = ["**/*.groovy", "**/*.java"];
-excludes = ["**/conf/**", "**/plugins/**"];
-
+  static def srcDirs = ["src/java", "src/groovy", "test", "grails-app"];
+  static def includes = ["**/*.groovy", "**/*.java"];
+  static def excludes = ["**/conf/**", "**/plugins/**"];
+  
+}
 
 eventCompileStart = {kind ->
   ConfigObject config = mergeConfig()
   // Ants Project is available via: kind.ant.project
-  println "Compile start."
+  println "Clover: Compile start."
 
 //  binding.variables.each { println "${it.key} ${it.value}"} // dumps all available vars and their values
 
@@ -25,12 +25,10 @@ eventCompileStart = {kind ->
 
 eventSetClasspath = {URLClassLoader rootLoader ->
 
-  println "Clover plugin base dir: ${cloverPluginDir}"
-
 //  grailsSettings.compileDependencies.each { println it }
   
   ConfigObject config = mergeConfig()
-  println "Using Clover Config: ${config}"
+  println "Clover: Using config: ${config}"
 
   toggleAntLogging(config)
 
@@ -38,20 +36,14 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
     toggleCloverOn(config)
 
-    if (!config.preserve) {
+    if (!config.containsKey('forceClean') || config.forceClean) {
           // force a clean
-          println "Forcing a clean"
-
           def webInf = "${basedir}/web-app/WEB-INF"
-          ant.delete(dir:"${webInf}/classes")
-          ant.delete(file:webXmlFile.absolutePath, failonerror:false)
-          ant.delete(dir:"${projectWorkDir}/gspcompile", failonerror:false)
-          ant.delete(dir:"${webInf}/lib")
-          ant.delete(dir:"${basedir}/web-app/plugins")
-          ant.delete(dir:classesDirPath)
-          ant.delete(dir:resourcesDirPath)
-          ant.delete(dir:testDirPath)
-          ant.delete(dir:"${projectWorkDir}/clover")
+          def cleanDirs = ["${webInf}/classes", "${webInf}/lib", "${projectWorkDir}/gspcompile", classesDirPath, testDirPath, "${projectWorkDir}/clover"]  
+
+          println "Clover: Forcing a clean to ensure Clover instrumentation occurs. Disable by setting: clover.forceClean=false "
+          cleanDirs.each {ant.delete(dir:it, failonerror:false)}
+
     }
   }
 }
@@ -71,7 +63,7 @@ eventTestPhasesStart = {
 
 eventTestPhasesEnd = {
   ConfigObject config = mergeConfig()
-  println "Tests ended"
+  println "Clover: Tests ended"
 
   if (!config.enabled) {
     return;
@@ -113,7 +105,15 @@ private def toggleCloverOn(ConfigObject clover) {
 
     final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
     antConfig.initstring = initString
-    ant.'clover-setup'()
+    
+    srcDirs = clover.srcDirs ? clover.srcDirs: Defaults.srcDirs
+    includes = clover.includes ? clover.includes: Defaults.includes
+    excludes = clover.excludes ? clover.excludes: Defaults.excludes
+
+    println """Clover:
+               directories: ${srcDirs}
+               includes:    ${includes}
+               excludes     ${excludes}"""
 
     ant.'clover-setup'(initString: initString, tmpDir: "${projectWorkDir}/clover/tmp") {
 
@@ -122,12 +122,7 @@ private def toggleCloverOn(ConfigObject clover) {
             excludes.each { exclude(name: it) }
             includes.each { include(name: it) }
           }
-          println "DIR: ${dir} added includes: ${includes}, excludes ${excludes}"
         }
-
-
-        ant.fileset(dir:'grails-app', includes:'**/*.groovy', excludes: '**/conf/**, **/plugins/**')
-        ant.fileset(dir:'src', includes:'**/*.groovy, **/*.java')
     }
     
   }
@@ -178,6 +173,9 @@ private def configureAntInstr(ConfigObject clover, AntInstrumentationConfig antC
           break;
         case Boolean.class.getPrimitiveClass("boolean"):
           val = (it.value == null || Boolean.parseBoolean(it.value.toString()))
+          break;
+        case File.class:
+          val = new File(it.value.toString())
           break;
         default:
           val = it.value

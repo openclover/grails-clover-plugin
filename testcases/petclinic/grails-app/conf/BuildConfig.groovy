@@ -7,6 +7,10 @@ grails.plugin.location.clover = "../../"
 
 clover {
 
+  includes = ["**/*.groovy"]
+  excludes = ["**/conf/**"]
+  srcDirs = ["grails-app", "src"]
+  
   XXXsetuptask = { ant, binding ->
     // example closure that will be invoked to configure clover.
     // any initialisation for clover should be done here.

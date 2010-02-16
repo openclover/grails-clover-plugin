@@ -1,11 +1,16 @@
 grails.project.work.dir="build"
 grails.project.test.reports.dir="build/test"
 
+
+
 clover {
   debug = false;
   enabled = false;
   core.version = 'com.cenqua.clover:clover:3.0.0-SNAPSHOT';
   license.path = "clover.license"
+
+  defaultIncludes = ["a", "b", "c"];
+
 }
 
 grails.project.dependency.resolution = {
@@ -22,5 +27,4 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
          runtime(clover.core.version)
     }
-
 }
