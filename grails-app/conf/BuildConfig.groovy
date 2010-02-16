@@ -1,19 +1,12 @@
+grails.project.work.dir="build"
+grails.project.test.reports.dir="build/test"
 
 clover {
   debug = false;
   enabled = false;
   core.version = 'com.cenqua.clover:clover:3.0.0-SNAPSHOT';
-//  license.path = "clover.license"
-
-  srcDirs = []
-  includes = []
-  excludes = []
-
+  license.path = "clover.license"
 }
-
-grails.project.work.dir="build"
-grails.project.test.reports.dir="build/test"
-
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies  
@@ -21,19 +14,13 @@ grails.project.dependency.resolution = {
     repositories {
 
         grailsPlugins() // plugins should first look in their lib dir
-        flatDir name:'clover', dirs:'../build/clover-ant' // when building this plugin, look in build/clover-ant
         mavenLocal() // otherwise look in the local maven repo
+        mavenRepo "https://maven.atlassian.com/content/groups/public/"
+
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
-         build name = clover.core.version, force = true, changing = true, checkModified=true
-         runtime clover.core.version, force = true, changing = true, checkModified=true
-    }
-    credentials {
-          realm = 'maven.atlassian.com'
-          host = 'maven.atlassian.com'
-          username = '' // TODO: have these passed from the command line somehow
-          password = ''
+         runtime(clover.core.version)
     }
 
 }
