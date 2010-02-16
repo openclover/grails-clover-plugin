@@ -2,7 +2,7 @@ class CloverGrailsPlugin {
     // the plugin version
     def version = "0.1"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "1.2.0 > *"
+    def grailsVersion = "1.2.* > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
@@ -10,7 +10,9 @@ class CloverGrailsPlugin {
             "grails-app/views/error.gsp",
             "samples",
             "test",
-            "etc/clover.license"
+            "etc/clover.license",
+            "testcases",
+            "docs"
     ]
 
     def environments = ['test']
