@@ -3,6 +3,7 @@ package org.grails.samples;
 /**
  * @author Graeme Rocher
  */
-class PetType  {
-	String name
+class PetType
+{
+  String name
 }

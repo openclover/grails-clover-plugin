@@ -1,8 +1,10 @@
 package org.grails.samples
 
-class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
+class OwnerControllerTests extends grails.test.ControllerUnitTestCase
+{
 
-  void testAddGET() {
+  void testAddGET()
+  {
     def controller = newInstance()
 
     controller.request.method = 'GET'
@@ -12,7 +14,20 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
     assertTrue model.ownerBean instanceof Owner
   }
 
-  void testAddInvalidOwner() {
+//  void testShow()
+//  {
+//    def controller = newInstance()
+//
+//    controller.request.method = 'GET'
+//    controller.params.id = "1"
+//    def model = controller.show()
+//    println "MODEL: " + model
+//    assertTrue model == null
+//  }
+
+
+  void testAddInvalidOwner()
+  {
     def controller = newInstance()
     mockDomain(Owner)
     controller.request.method = 'POST'
@@ -23,7 +38,8 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
     assertNotNull renderArgs.model.ownerBean
   }
 
-  void testValidOwner() {
+  void testValidOwner()
+  {
     def controller = newInstance()
     mockDomain(Owner)
 
@@ -38,7 +54,8 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
     assertEquals "show", redirectArgs.action
   }
 
-  void testFindNoResults() {
+  void testFindNoResults()
+  {
     def controller = newInstance()
     mockDomain(Owner)
     controller.request.method = 'POST'
@@ -47,7 +64,8 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
     assertEquals 'owners.not.found', model?.message
   }
 
-  void testFindOneResult() {
+  void testFindOneResult()
+  {
     mockDomain(Owner, [new Owner(id: 10L, lastName: "flintstone")])
 
     def controller = newInstance()
@@ -60,7 +78,8 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase {
     assertEquals 10L, redirectArgs.id
   }
 
-  void testFindManyResults() {
+  void testFindManyResults()
+  {
     mockDomain(Owner, [new Owner(id: 10L, lastName: "flintstone"), new Owner(id: 12L, lastName: "flintstone")])
 
     def controller = newInstance()

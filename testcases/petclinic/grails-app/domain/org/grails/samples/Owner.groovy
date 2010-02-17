@@ -5,17 +5,18 @@ package org.grails.samples;
  *
  * @author Graeme Rocher
  */
-class Owner extends Person {
+class Owner extends Person
+{
 
-	String address
-	String city
-	String telephone
+  String address
+  String city
+  String telephone
 
-	static hasMany = [pets:Pet]
-	
-	static constraints = {
-		address blank:false
-		city blank:false		
-		telephone matches:/\d+/, blank:false
-	}
+  static hasMany = [pets: Pet]
+
+  static constraints = {
+    address blank: false
+    city blank: false
+    telephone matches: /\d+/, blank: false
+  }
 }

@@ -5,18 +5,19 @@ package org.grails.samples;
  *
  * @author Graeme Rocher
  */
-class Pet {
+class Pet
+{
 
-	String name
-	Date birthDate
-	PetType type
-	Owner owner
-	
-	static hasMany = [visits:Visit]
-	
-	static constraints = {
-		name blank:false, validator: { val, obj ->
-			if(!obj.id && obj.owner?.pets?.find { it.name == val } ) return "pet.duplicate"
-		}
-	}
+  String name
+  Date birthDate
+  PetType type
+  Owner owner
+
+  static hasMany = [visits: Visit]
+
+  static constraints = {
+    name blank: false, validator: { val, obj ->
+      if (!obj.id && obj.owner?.pets?.find { it.name == val }) return "pet.duplicate"
+    }
+  }
 }

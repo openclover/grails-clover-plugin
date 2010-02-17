@@ -1,269 +1,277 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugins revision="9139">
-<plugin latest-release="1.1.1" name="hibernate">
-<release type="svn" tag="RELEASE_1_1" version="1.1">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1/grails-hibernate-1.1.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1-RC1" version="1.1-RC1">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-RC1/grails-hibernate-1.1-RC1.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1-RC2" version="1.1-RC2">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-RC2/grails-hibernate-1.1-RC2.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1-SNAPSHOT" version="1.1-SNAPSHOT">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-SNAPSHOT/grails-hibernate-1.1-SNAPSHOT.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1-beta3" version="1.1-beta3">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-beta3/grails-hibernate-1.1-beta3.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1_1" version="1.1.1">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1_1/grails-hibernate-1.1.1.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_1_1-SNAPSHOT" version="1.1.1-SNAPSHOT">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1_1-SNAPSHOT/grails-hibernate-1.1.1-SNAPSHOT.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-M1" version="1.2-M1">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M1/grails-hibernate-1.2-M1.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-M2" version="1.2-M2">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/1.2-M2
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M2/grails-hibernate-1.2-M2.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
-<title>
-        Hibernate for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail/>
-<description>
-        A plugin that provides integration between Grails and Hibernate through GORM
-      </description>
-<documentation>
-        http://grails.org/doc/$version
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-SNAPSHOT/grails-hibernate-1.2-SNAPSHOT.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
-<title>Hibernate for Grails</title>
-<author>Graeme Rocher</author>
-<authorEmail/>
-<description>A plugin that provides integration between Grails and Hibernate through GORM</description>
-<documentation>http://grails.org/doc/1.2-M3</documentation>
-<file>https://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M3/grails-hibernate-1.2-M3.zip</file>
-</release>
-</plugin>
-<plugin latest-release="1.2-M3" name="tomcat">
-<release type="svn" tag="RELEASE_1_2-M2" version="1.2-M2">
-<title>
-        Apache Tomcat plugin for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail>
-        graeme.rocher@springsource.com
-      </authorEmail>
-<description>
-        \
-Replaces Jetty with Tomcat as the default development time server for Grails
-      </description>
-<documentation>
-        http://grails.org/plugin/tomcat
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-M2/grails-tomcat-1.2-M2.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
-<title>
-        Apache Tomcat plugin for Grails
-      </title>
-<author>
-        Graeme Rocher
-      </author>
-<authorEmail>
-        graeme.rocher@springsource.com
-      </authorEmail>
-<description>
-        \
-Replaces Jetty with Tomcat as the default development time server for Grails
-      </description>
-<documentation>
-        http://grails.org/plugin/tomcat
-      </documentation>
-<file>
-        http://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-SNAPSHOT/grails-tomcat-1.2-SNAPSHOT.zip
-      </file>
-</release>
-<release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
-<title>Apache Tomcat plugin for Grails</title>
-<author>Graeme Rocher</author>
-<authorEmail>graeme.rocher@springsource.com</authorEmail>
-<description>\
-Replaces Jetty with Tomcat as the default development time server for Grails
-</description>
-<documentation>http://grails.org/plugin/tomcat</documentation>
-<file>https://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-M3/grails-tomcat-1.2-M3.zip</file>
-</release>
-</plugin>
-<plugin latest-release="1.2-M3" name="webflow">
-<release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
-<title>Spring Web Flow Plugin</title>
-<author>Graeme Rocher</author>
-<authorEmail>graeme.rocher@springsource.com</authorEmail>
-<description>\
-Integrates Spring Web Flow with Grails
-</description>
-<documentation>http://grails.org/plugin/webflow</documentation>
-<file>https://svn.codehaus.org/grails/trunk/grails-plugins/grails-webflow/tags/RELEASE_1_2-SNAPSHOT/grails-webflow-1.2-SNAPSHOT.zip</file>
-</release>
-<release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
-<title>Spring Web Flow Plugin</title>
-<author>Graeme Rocher</author>
-<authorEmail>graeme.rocher@springsource.com</authorEmail>
-<description>\
-Integrates Spring Web Flow with Grails
-</description>
-<documentation>http://grails.org/plugin/webflow</documentation>
-<file>https://svn.codehaus.org/grails/trunk/grails-plugins/grails-webflow/tags/RELEASE_1_2-M3/grails-webflow-1.2-M3.zip</file>
-</release>
-</plugin>
+    <plugin latest-release="1.1.1" name="hibernate">
+        <release type="svn" tag="RELEASE_1_1" version="1.1">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1/grails-hibernate-1.1.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1-RC1" version="1.1-RC1">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-RC1/grails-hibernate-1.1-RC1.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1-RC2" version="1.1-RC2">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-RC2/grails-hibernate-1.1-RC2.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1-SNAPSHOT" version="1.1-SNAPSHOT">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-SNAPSHOT/grails-hibernate-1.1-SNAPSHOT.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1-beta3" version="1.1-beta3">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1-beta3/grails-hibernate-1.1-beta3.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1_1" version="1.1.1">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1_1/grails-hibernate-1.1.1.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_1_1-SNAPSHOT" version="1.1.1-SNAPSHOT">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_1_1-SNAPSHOT/grails-hibernate-1.1.1-SNAPSHOT.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-M1" version="1.2-M1">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M1/grails-hibernate-1.2-M1.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-M2" version="1.2-M2">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/1.2-M2
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M2/grails-hibernate-1.2-M2.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
+            <title>
+                Hibernate for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail/>
+            <description>
+                A plugin that provides integration between Grails and Hibernate through GORM
+            </description>
+            <documentation>
+                http://grails.org/doc/$version
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-SNAPSHOT/grails-hibernate-1.2-SNAPSHOT.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
+            <title>Hibernate for Grails</title>
+            <author>Graeme Rocher</author>
+            <authorEmail/>
+            <description>A plugin that provides integration between Grails and Hibernate through GORM</description>
+            <documentation>http://grails.org/doc/1.2-M3</documentation>
+            <file>
+                https://svn.codehaus.org/grails/trunk/grails-plugins/grails-hibernate/tags/RELEASE_1_2-M3/grails-hibernate-1.2-M3.zip
+            </file>
+        </release>
+    </plugin>
+    <plugin latest-release="1.2-M3" name="tomcat">
+        <release type="svn" tag="RELEASE_1_2-M2" version="1.2-M2">
+            <title>
+                Apache Tomcat plugin for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail>
+                graeme.rocher@springsource.com
+            </authorEmail>
+            <description>
+                \
+                Replaces Jetty with Tomcat as the default development time server for Grails
+            </description>
+            <documentation>
+                http://grails.org/plugin/tomcat
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-M2/grails-tomcat-1.2-M2.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
+            <title>
+                Apache Tomcat plugin for Grails
+            </title>
+            <author>
+                Graeme Rocher
+            </author>
+            <authorEmail>
+                graeme.rocher@springsource.com
+            </authorEmail>
+            <description>
+                \
+                Replaces Jetty with Tomcat as the default development time server for Grails
+            </description>
+            <documentation>
+                http://grails.org/plugin/tomcat
+            </documentation>
+            <file>
+                http://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-SNAPSHOT/grails-tomcat-1.2-SNAPSHOT.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
+            <title>Apache Tomcat plugin for Grails</title>
+            <author>Graeme Rocher</author>
+            <authorEmail>graeme.rocher@springsource.com</authorEmail>
+            <description>\
+                Replaces Jetty with Tomcat as the default development time server for Grails
+            </description>
+            <documentation>http://grails.org/plugin/tomcat</documentation>
+            <file>
+                https://svn.codehaus.org/grails/trunk/grails-plugins/grails-tomcat/tags/RELEASE_1_2-M3/grails-tomcat-1.2-M3.zip
+            </file>
+        </release>
+    </plugin>
+    <plugin latest-release="1.2-M3" name="webflow">
+        <release type="svn" tag="RELEASE_1_2-SNAPSHOT" version="1.2-SNAPSHOT">
+            <title>Spring Web Flow Plugin</title>
+            <author>Graeme Rocher</author>
+            <authorEmail>graeme.rocher@springsource.com</authorEmail>
+            <description>\
+                Integrates Spring Web Flow with Grails
+            </description>
+            <documentation>http://grails.org/plugin/webflow</documentation>
+            <file>
+                https://svn.codehaus.org/grails/trunk/grails-plugins/grails-webflow/tags/RELEASE_1_2-SNAPSHOT/grails-webflow-1.2-SNAPSHOT.zip
+            </file>
+        </release>
+        <release type="svn" tag="RELEASE_1_2-M3" version="1.2-M3">
+            <title>Spring Web Flow Plugin</title>
+            <author>Graeme Rocher</author>
+            <authorEmail>graeme.rocher@springsource.com</authorEmail>
+            <description>\
+                Integrates Spring Web Flow with Grails
+            </description>
+            <documentation>http://grails.org/plugin/webflow</documentation>
+            <file>
+                https://svn.codehaus.org/grails/trunk/grails-plugins/grails-webflow/tags/RELEASE_1_2-M3/grails-webflow-1.2-M3.zip
+            </file>
+        </release>
+    </plugin>
 </plugins>

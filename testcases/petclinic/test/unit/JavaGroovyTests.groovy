@@ -1,10 +1,12 @@
 import com.cenqua.java.ImJava
 /**
  */
-public class JavaGroovyTests extends GroovyTestCase {
+public class JavaGroovyTests extends GroovyTestCase
+{
 
 
-  public void testConstructor() {
+  public void testConstructor()
+  {
     new ImJava();
   }
 

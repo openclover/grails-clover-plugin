@@ -2,13 +2,16 @@ package com.cenqua.sample
 
 /**
  */
-class ImGroovy {
+class ImGroovy
+{
 
-  public void foo() {
+  public void foo()
+  {
     println "Foo"
   }
 
-  public void bar()  {
+  public void bar()
+  {
     println "Bar"
   }
 

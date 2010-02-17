@@ -2,7 +2,8 @@ package com.cenqua.java;
 
 import com.cenqua.sample.ImGroovy;
 
-public class ImJava {
+public class ImJava
+{
 
 
     public ImJava()

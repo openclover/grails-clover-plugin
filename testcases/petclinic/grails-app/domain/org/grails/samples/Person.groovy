@@ -5,13 +5,14 @@ package org.grails.samples;
  *
  * @author Graeme Rocher
  */
-class Person {
+class Person
+{
 
-	String firstName
-	String lastName
-	
-	static constraints = {
-		firstName blank:false
-		lastName blank:false
-	}
+  String firstName
+  String lastName
+
+  static constraints = {
+    firstName blank: false
+    lastName blank: false
+  }
 }

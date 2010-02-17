@@ -1,6 +1,7 @@
 <ivy-module version="2.0">
     <info organisation="org.example" module="petclinic"/>
-    <configurations defaultconfmapping="build->default;compile->compile(*),master(*);test,runtime->runtime(*),master(*)">
+    <configurations
+            defaultconfmapping="build->default;compile->compile(*),master(*);test,runtime->runtime(*),master(*)">
         <conf name="build"/>
         <conf name="compile"/>
         <conf name="test" extends="compile"/>
