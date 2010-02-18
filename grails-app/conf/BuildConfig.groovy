@@ -8,9 +8,6 @@ clover {
   enabled = false;
   core.version = 'com.cenqua.clover:clover:3.0.0-SNAPSHOT';
   license.path = "clover.license"
-
-  defaultIncludes = ["a", "b", "c"];
-
 }
 
 grails.project.dependency.resolution = {
@@ -21,6 +18,7 @@ grails.project.dependency.resolution = {
         grailsPlugins() // plugins should first look in their lib dir
         mavenLocal() // otherwise look in the local maven repo
         mavenRepo "https://maven.atlassian.com/content/groups/public/"
+        mavenRepo "https://maven.atlassian.com/private-snapshot/"
 
     }
     dependencies {
