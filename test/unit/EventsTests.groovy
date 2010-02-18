@@ -18,16 +18,17 @@ public class EventsTests extends GroovyTestCase
   Binding binding
   GantBuilder ant
   Object script
-  
-  public void setUp() {
+
+  public void setUp()
+  {
     ant = new GantBuilder()
     binding = new Binding([projectWorkDir: testRunTmpDir,
-                           basedir: testRunTmpDir,
-                           metadata: [],
-                           ant: ant,
-                           userHome: testRunTmpDir,
-                           grailsWorkDir: testRunTmpDir
-                            ]);
+            basedir: testRunTmpDir,
+            metadata: [],
+            ant: ant,
+            userHome: testRunTmpDir,
+            grailsWorkDir: testRunTmpDir
+    ]);
     GroovyScriptEngine shell = new GroovyScriptEngine("grails/scripts/_Events.groovy");
     script = shell.run("_Events.groovy", binding);
   }
@@ -37,7 +38,7 @@ public class EventsTests extends GroovyTestCase
     ConfigObject config = new ConfigObject()
     config.debug = true
     int outputLevel = 0; // this gets modified by toggleAntLogging
-    def logger =  [setMessageOutputLevel: {outputLevel = it}] as DefaultLogger
+    def logger = [setMessageOutputLevel: {outputLevel = it}] as DefaultLogger
     ant.project.addBuildListener(logger)
     script.toggleAntLogging config
     println outputLevel
@@ -47,7 +48,7 @@ public class EventsTests extends GroovyTestCase
   public void testConfigureMissingLicense()
   {
     ConfigObject config = new ConfigObject()
-    String origLicenseLoc =  System.properties.remove('clover.license.path')
+    String origLicenseLoc = System.properties.remove('clover.license.path')
     try
     {
       script.configureLicense(config)
@@ -59,6 +60,21 @@ public class EventsTests extends GroovyTestCase
     }
   }
 
+  public void testConfigureLicense()
+  {
+    ConfigObject config = new ConfigObject()
+    String origLicenseLoc = System.properties.remove('clover.license.path')
+    try
+    {
+      config.license.path = "/path/to/clover.license"
+      script.configureLicense(config)
+      assertEquals config.license.path, System.getProperty('clover.license.path')
+    }
+    finally
+    {
+      System.setProperty('clover.license.path', origLicenseLoc)
+    }
+  }
 
 
 }
