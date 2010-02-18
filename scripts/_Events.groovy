@@ -271,7 +271,8 @@ private def configureLicense(ConfigObject clover)
 
   if (!license)
   {
-    println """No clover.license configured. Please define license.path=/path/to/clover.license in the
+    println """
+               No clover.license configured. Please define license.path=/path/to/clover.license in the
                clover configuration in conf/BuildConfig.groovy"""
   }
   else
