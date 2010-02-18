@@ -24,7 +24,7 @@ clover {
   // reporttask is a closure that gets passed a reference to the GantBuilder object.
   // any of Clover's report tasks, in fact any Ant Task, can be included.
   // this closure is invoked as soon as all tests have run
-  XXXreporttask = { ant, binding ->
+  reporttask = { ant, binding, self ->
 
     ant.mkdir(dir: "${clover.reports.dir}")
 
@@ -49,6 +49,7 @@ clover {
 
       }
     }
+    self.launchReport(clover.reports.dir)
 
   }
 }

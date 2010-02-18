@@ -2,6 +2,7 @@ import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
 import com.cenqua.clover.tasks.AntInstrumentationConfig
+import com.atlassian.clover.grails.BareBonesBrowserLaunch
 
 
 def cloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
@@ -90,33 +91,37 @@ eventTestPhasesEnd = {
             historyDir: config.historydir ?: cloverHistoryDir,
             title: config.title ?: cloverReportTitle)
 
-    File openFile = new File(reportLocation, "index.html")
-    if (openFile.exists())
-    {
-      if (testNames.size() > 0)
-      {
-        // org/grails/samples/OwnerControllerTests.html
-        File testFile = new File(reportLocation, testNames[0].replaceAll("\\.", File.separator) + "Tests.html")
-        openFile = testFile.exists() ? testFile : openFile
-      }
-
-
-      String openLoc = openFile.toURI().toString()
-      println "About to launch!! ${openLoc}"
-      BareBonesBrowserLaunch.openURL(openLoc);
+    if (config.openHtmlReport) {
+      launchReport(reportLocation)
     }
-
   }
   else
   {
-
     // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
     // this closure can be used to generate a custom html report.
     // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
-    config.reporttask(ant, binding)
+    config.reporttask(ant, binding, this)
   }
 
 
+}
+
+public def launchReport(def reportLocation )
+{
+  File openFile = new File(reportLocation, "index.html")
+  if (openFile.exists())
+  {
+    if (testNames.size() > 0)
+    {
+      File testFile = new File(reportLocation, testNames[0].replaceAll("\\.", File.separator) + "Tests.html")
+      openFile = testFile.exists() ? testFile : openFile
+    }
+
+
+    String openLoc = openFile.toURI().toString()
+    println "About to launch!! ${openLoc}"
+    BareBonesBrowserLaunch.openURL(openLoc);
+  }
 }
 
 private def toggleCloverOn(ConfigObject clover)

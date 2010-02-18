@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////
+package com.atlassian.clover.grails;/////////////////////////////////////////////////////////
 //  Bare Bones Browser Launch                          //
 //  Version 3.0 (February 7, 2010)                     //
 //  By Dem Pilafian                                    //
