@@ -2,7 +2,7 @@ import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
 import com.cenqua.clover.tasks.AntInstrumentationConfig
-import com.atlassian.clover.grails.BareBonesBrowserLaunch
+import com.cenqua.clover.reporters.util.BrowserLaunch
 
 
 def cloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
@@ -106,6 +106,15 @@ eventTestPhasesEnd = {
 
 }
 
+/**
+ * Tries to launch a HTML report in your browser.
+ *
+ * If only a single test was run, then just that test's page will be shown.
+ * Otherwise, the dashboard page is displayed. This is useful if using IDEA/Eclipse to run grails tests.
+ * 
+ * @param reportLocation the directory containing the report to launch
+ * @return
+ */
 public def launchReport(def reportLocation )
 {
   File openFile = new File(reportLocation, "index.html")
@@ -120,7 +129,7 @@ public def launchReport(def reportLocation )
 
     String openLoc = openFile.toURI().toString()
     println "About to launch!! ${openLoc}"
-    BareBonesBrowserLaunch.openURL(openLoc);
+    BrowserLaunch.openURL openLoc;
   }
 }
 
