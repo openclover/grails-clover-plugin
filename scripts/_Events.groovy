@@ -1,10 +1,6 @@
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
-import com.cenqua.clover.tasks.AntInstrumentationConfig
-import com.cenqua.clover.reporters.util.BrowserLaunch
-
-
 // some clover defaults
 defCloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
 defCloverIncludes = ["**/*.groovy", "**/*.java"];
@@ -12,6 +8,18 @@ defCloverExcludes = ["**/conf/**", "**/plugins/**"];
 defCloverReportDir = "build/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
+
+// HACK to work-around: http://jira.codehaus.org/browse/GRAILS-5755
+loadDependencyClass = {name ->
+  def doLoad = { -> classLoader.loadClass(name) }
+  try {
+    doLoad()
+  } catch (ClassNotFoundException e) {
+    includeTargets << grailsScript("_GrailsCompile")
+    compile()
+    doLoad()
+  }
+}
 
 
 eventCompileStart = {kind ->
@@ -96,7 +104,7 @@ eventTestPhasesEnd = {
             historyDir: historyDir,
             title: config.title ?: defCloverReportTitle)
 
-    if (config.openHtmlReport) {
+    if (config.view) {
       launchReport(reportLocation)
     }
   }
@@ -134,11 +142,11 @@ public def launchReport(def reportLocation )
 
     String openLoc = openFile.toURI().toString()
     println "About to launch!! ${openLoc}"
-    BrowserLaunch.openURL openLoc;
+    com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
   }
 }
 
-private def toggleCloverOn(ConfigObject clover)
+def toggleCloverOn(ConfigObject clover)
 {
 
   configureLicense(clover)
@@ -147,7 +155,9 @@ private def toggleCloverOn(ConfigObject clover)
   ant.'clover-env'()
 
   // create an AntInstrumentationConfig object, and set this on the ant project
-  AntInstrumentationConfig antConfig = new AntInstrumentationConfig(ant.project)
+  def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
+
+  def antConfig = antInstrConfClass.newInstance(ant.project)
   configureAntInstr(clover, antConfig)
   antConfig.setIn ant.project
 
@@ -155,7 +165,7 @@ private def toggleCloverOn(ConfigObject clover)
   {
     println "Using custom clover-setup configuration."
 
-    clover.setuptask(ant, binding)
+    clover.setuptask(ant, binding, this)
   }
   else
   {
@@ -213,7 +223,7 @@ private def ConfigObject mergeConfig()
  * As are String.
  *
  */
-private def configureAntInstr(ConfigObject clover, AntInstrumentationConfig antConfig)
+private def configureAntInstr(ConfigObject clover, def antConfig)
 {
 
   return clover.each {
