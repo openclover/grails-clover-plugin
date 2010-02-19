@@ -11,14 +11,17 @@ clover {
   excludes = ["**/conf/**"]
   srcDirs = ["grails-app", "src", "test"]
 
-  XXXsetuptask = { ant, binding ->
-    // example closure that will be invoked to configure clover.
-    // any initialisation for clover should be done here.
-    // all attributes on the ant clover-setup task can be defined.
-    ant.'clover-setup'(initstring: "${binding.projectWorkDir}/clover/custom/clover.db") {
-      fileset(dir: "grails-app") { includes: "**/*.groovy"}
-    }
-  }
+// TODO: investigate why the fileset appears to be ignored below...
+//  setuptask = { ant, binding, plugin ->
+//    // example closure that will be invoked to configure clover.
+//    // any initialisation for clover should be done here.
+//    // all attributes on the ant clover-setup task can be defined.
+//    ant.'clover-setup'(initstring: "${binding.projectWorkDir}/clover/custom/clover.db") {
+//      fileset(dir: "grails-app") {
+//          ant.excludes: "**/conf/**"
+//      }
+//    }
+//  }
 
   // example Custom Clover Report configuration:
   // reporttask is a closure that gets passed a reference to the GantBuilder object.
@@ -49,7 +52,11 @@ clover {
 
       }
     }
-    self.launchReport(clover.reports.dir)
+
+    if (config.view) {
+      self.launchReport(clover.reports.dir)
+    }
+
 
   }
 }

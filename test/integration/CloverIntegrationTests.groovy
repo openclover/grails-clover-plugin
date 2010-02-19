@@ -11,7 +11,7 @@ public class CloverIntegrationTests extends AbstractCliTestCase {
     setWorkDir(testProjectDir)
     setOutputDir(new File("build/testcases/petclinic"))
 
-    execute(["test-app", "-clover.enabled"])
+    execute(["test-app", "-clover.on"])
     assertEquals 0, waitForProcess()
     verifyHeader()
     assertTrue new File(testProjectDir, "build/clover/report/index.html").exists()

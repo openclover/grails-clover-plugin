@@ -43,7 +43,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   toggleAntLogging(config)
 
-  if (config.enabled)
+  if (config.on)
   {
 
     toggleCloverOn(config)
@@ -80,7 +80,7 @@ eventTestPhasesEnd = {
   ConfigObject config = mergeConfig()
   println "Clover: Tests ended"
 
-  if (!config.enabled)
+  if (!config.on)
   {
     return;
   }

@@ -29,7 +29,7 @@ public class EventsTests extends GroovyTestCase
             userHome: testRunTmpDir,
             grailsWorkDir: testRunTmpDir
     ]);
-    GroovyScriptEngine shell = new GroovyScriptEngine("grails/scripts/_Events.groovy");
+    GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy");
     script = shell.run("_Events.groovy", binding);
   }
 
@@ -56,7 +56,10 @@ public class EventsTests extends GroovyTestCase
     }
     finally
     {
-      System.setProperty('clover.license.path', origLicenseLoc)
+      if (origLicenseLoc)
+      {
+        System.setProperty('clover.license.path', origLicenseLoc)
+      }
     }
   }
 
@@ -72,7 +75,10 @@ public class EventsTests extends GroovyTestCase
     }
     finally
     {
-      System.setProperty('clover.license.path', origLicenseLoc)
+      if (origLicenseLoc)
+      {
+        System.setProperty('clover.license.path', origLicenseLoc)
+      }
     }
   }
 
