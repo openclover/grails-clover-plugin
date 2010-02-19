@@ -5,21 +5,19 @@ import com.cenqua.clover.tasks.AntInstrumentationConfig
 import com.cenqua.clover.reporters.util.BrowserLaunch
 
 
-def cloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
-def cloverIncludes = ["**/*.groovy", "**/*.java"];
-def cloverExcludes = ["**/conf/**", "**/plugins/**"];
-def cloverReportDir = "${projectWorkDir}/clover/report"
-def cloverHistoryDir = "${basedir}/.cloverhistory"
-def cloverReportTitle = metadata["app.name"]
-
-println "AppName: ${cloverReportTitle}"
+// some clover defaults
+defCloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
+defCloverIncludes = ["**/*.groovy", "**/*.java"];
+defCloverExcludes = ["**/conf/**", "**/plugins/**"];
+defCloverReportDir = "build/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
+defCloverHistoryDir = "${basedir}/.cloverhistory"
+defCloverReportTitle = metadata["app.name"]
 
 
 eventCompileStart = {kind ->
   ConfigObject config = mergeConfig()
   // Ants Project is available via: kind.ant.project
   println "Clover: Compile start."
-  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
   System.setProperty "grover.ast.dump", "" + config.dumpAST
 }
 
@@ -29,6 +27,11 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   ConfigObject config = mergeConfig()
   println "Clover: Using config: ${config}"
+
+  if (config.debug) {
+    println "Clover: Dumping binding variables:"
+    binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
+  }
 
   toggleAntLogging(config)
 
@@ -74,9 +77,12 @@ eventTestPhasesEnd = {
     return;
   }
 
+  def historyDir = config.historydir ?: defCloverHistoryDir
+  def reportLocation = config.reportdir ?: defCloverReportDir
+
   if (!config.historypointtask)
   {
-    ant.'clover-historypoint'(historyDir: config.historydir ?: cloverHistoryDir)
+    ant.'clover-historypoint'(historyDir: historyDir)
   }
   else
   {
@@ -86,10 +92,9 @@ eventTestPhasesEnd = {
   if (!config.reporttask)
   {
     // generate a report
-    final GString reportLocation = config.reportdir ?: cloverReportDir
     ant.'clover-html-report'(outdir: reportLocation,
-            historyDir: config.historydir ?: cloverHistoryDir,
-            title: config.title ?: cloverReportTitle)
+            historyDir: historyDir,
+            title: config.title ?: defCloverReportTitle)
 
     if (config.openHtmlReport) {
       launchReport(reportLocation)
@@ -159,9 +164,9 @@ private def toggleCloverOn(ConfigObject clover)
     final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
     antConfig.initstring = initString
 
-    cloverSrcDirs = clover.srcDirs ? clover.srcDirs : Defaults.srcDirs
-    cloverIncludes = clover.includes ? clover.includes : Defaults.includes
-    cloverExcludes = clover.excludes ? clover.excludes : Defaults.excludes
+    def cloverSrcDirs = clover.srcDirs ? clover.srcDirs : this.defCloverSrcDirs
+    def cloverIncludes = clover.includes ? clover.includes : this.defCloverIncludes
+    def cloverExcludes = clover.excludes ? clover.excludes : this.defCloverExcludes
 
     println """Clover:
                directories: ${cloverSrcDirs}
