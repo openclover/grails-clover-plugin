@@ -7,6 +7,7 @@ grails.plugin.location.clover = "../../"
 
 clover {
 
+  license.path="../../../etc/clover-development.license"
   includes = ["**/*.groovy"]
   excludes = ["**/conf/**"]
   srcDirs = ["grails-app", "src", "test"]
