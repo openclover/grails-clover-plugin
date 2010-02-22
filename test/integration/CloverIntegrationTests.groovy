@@ -12,7 +12,9 @@ public class CloverIntegrationTests extends AbstractCliTestCase {
     setOutputDir(new File("build/testcases/petclinic"))
 
     execute(["test-app", "-clover.on"])
-    assertEquals 0, waitForProcess()
+    int status = waitForProcess()
+    println "OUTPUT: " + getOutput()
+    assertEquals 0, status
     verifyHeader()
     assertTrue new File(testProjectDir, "build/clover/report/index.html").exists()
 
