@@ -1,7 +1,7 @@
 class CloverGrailsPlugin
 {
   // the plugin version
-  def version = "0.2"
+  def version = "0.3"
   // the version or versions of Grails the plugin is designed for
   def grailsVersion = "1.2.* > *"
   // the other plugins this plugin depends on
@@ -18,7 +18,6 @@ class CloverGrailsPlugin
 
   def environments = ['test']
 
-  // TODO Fill in these fields
   def author = "Atlassian"
   def authorEmail = "support@atlassian.com"
   def title = "Clover Code Coverage for Grails"
