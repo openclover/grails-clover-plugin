@@ -133,15 +133,18 @@ public def launchReport(def reportLocation )
   File openFile = new File(reportLocation, "index.html")
   if (openFile.exists())
   {
-    if (testNames.size() > 0)
+    if (testNames.size() > 0) // if there is a wildcard in the testname, we can't do anything...
     {
-      File testFile = new File(reportLocation, testNames[0].replaceAll("\\.", File.separator) + "Tests.html")
+      StringBuffer testName = new StringBuffer()
+      testNames[0].split("\\.").each { testName.append(it).append(File.separator) }
+      if (testName.length() > 1)  testName.deleteCharAt(testName.length() - 1)
+      String suffix = testName.toString().endsWith("Tests") ? "" : "Tests"
+      File testFile = new File(reportLocation, testName + suffix + ".html")
       openFile = testFile.exists() ? testFile : openFile
     }
 
-
     String openLoc = openFile.toURI().toString()
-    println "About to launch!! ${openLoc}"
+    println "About to launch: ${openLoc}"
     com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
   }
 }

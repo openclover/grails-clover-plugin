@@ -54,10 +54,6 @@ clover {
       }
     }
 
-    if (config.view) {
-      self.launchReport(clover.reports.dir)
-    }
-
-
+    self.launchReport(clover.reports.dir)
   }
 }
