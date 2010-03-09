@@ -2,7 +2,7 @@ import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
 // some clover defaults
-defCloverSrcDirs = ["src/java", "src/groovy", "test", "grails-app"];
+defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
 defCloverIncludes = ["**/*.groovy", "**/*.java"];
 defCloverExcludes = ["**/conf/**", "**/plugins/**"];
 defCloverReportDir = "build/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
@@ -135,9 +135,7 @@ public def launchReport(def reportLocation )
   {
     if (testNames.size() > 0) // if there is a wildcard in the testname, we can't do anything...
     {
-      StringBuffer testName = new StringBuffer()
-      testNames[0].split("\\.").each { testName.append(it).append(File.separator) }
-      if (testName.length() > 1)  testName.deleteCharAt(testName.length() - 1)
+      String testName = testNames[0].replace((char)'.', File.separatorChar)
       String suffix = testName.toString().endsWith("Tests") ? "" : "Tests"
       File testFile = new File(reportLocation, testName + suffix + ".html")
       openFile = testFile.exists() ? testFile : openFile
