@@ -27,7 +27,8 @@ public class EventsTests extends GroovyTestCase
             metadata: [],
             ant: ant,
             userHome: testRunTmpDir,
-            grailsWorkDir: testRunTmpDir
+            grailsWorkDir: testRunTmpDir,
+            cloverPluginDir:new File(".")
     ]);
     GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy");
     script = shell.run("_Events.groovy", binding);
@@ -45,14 +46,14 @@ public class EventsTests extends GroovyTestCase
     assertTrue outputLevel == Project.MSG_DEBUG
   }
 
-  public void testConfigureMissingLicense()
+  public void testConfigureUsingEvalLicense()
   {
     ConfigObject config = new ConfigObject()
     String origLicenseLoc = System.properties.remove('clover.license.path')
     try
     {
       script.configureLicense(config)
-      assertNull System.getProperty('clover.license.path')
+      assertNotNull System.getProperty('clover.license.path')
     }
     finally
     {
