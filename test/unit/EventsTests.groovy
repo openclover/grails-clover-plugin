@@ -28,6 +28,7 @@ public class EventsTests extends GroovyTestCase
             ant: ant,
             userHome: testRunTmpDir,
             grailsWorkDir: testRunTmpDir,
+            projectTargetDir: testRunTmpDir,
             cloverPluginDir:new File(".")
     ]);
     GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy");
