@@ -5,7 +5,7 @@ import org.apache.tools.ant.Project
 defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
 defCloverIncludes = ["**/*.groovy", "**/*.java"];
 defCloverExcludes = ["**/conf/**", "**/plugins/**"];
-defCloverReportDir = "build/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
+defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
 
