@@ -99,10 +99,28 @@ eventTestPhasesEnd = {
 
   if (!config.reporttask)
   {
-    // generate a report
-    ant.'clover-html-report'(outdir: reportLocation,
-            historyDir: historyDir,
-            title: config.title ?: defCloverReportTitle)
+
+    ant.'clover-report' {
+      ant.current(outfile: reportLocation, title: config.title ?: defCloverReportTitle) {
+        format(type: "html")
+        ant.columns {
+          lineCount()
+          filteredElements()
+          uncoveredElements()
+          totalPercentageCovered()
+        }
+      }
+      ant.historical(outfile: reportLocation, historyDir: historyDir)
+      ant.current(outfile: "${reportLocation}/clover.xml") {
+        format(type: "xml")
+      }
+      if (config.json) {
+        ant.current(outfile: reportLocation) {
+          format(type: "json")
+        }
+      }
+    }
+
 
     if (config.view) {
       launchReport(reportLocation)
