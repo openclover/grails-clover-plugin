@@ -8,6 +8,7 @@ defCloverExcludes = ["**/conf/**", "**/plugins/**"];
 defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
+defCloverHistorical = true; // by default, we will generate a historical report.
 
 // HACK to work-around: http://jira.codehaus.org/browse/GRAILS-5755
 loadDependencyClass = {name ->
@@ -88,13 +89,21 @@ eventTestPhasesEnd = {
   def historyDir = config.historydir ?: defCloverHistoryDir
   def reportLocation = config.reportdir ?: defCloverReportDir
 
-  if (!config.historypointtask)
-  {
-    ant.'clover-historypoint'(historyDir: historyDir)
+  def historical = defCloverHistorical
+  if (config.historical != null) {
+    historical = config.historical
   }
-  else
+
+  if (historical)
   {
-    config.historypointtask(ant, binding)
+    if (!config.historypointtask)
+    {
+      ant.'clover-historypoint'(historyDir: historyDir)
+    }
+    else
+    {
+      config.historypointtask(ant, binding)
+    }
   }
 
   if (!config.reporttask)
@@ -110,7 +119,9 @@ eventTestPhasesEnd = {
           totalPercentageCovered()
         }
       }
-      ant.historical(outfile: reportLocation, historyDir: historyDir)
+      if (historical) {
+        ant.historical(outfile: reportLocation, historyDir: historyDir)
+      }
       ant.current(outfile: "${reportLocation}/clover.xml") {
         format(type: "xml")
       }
