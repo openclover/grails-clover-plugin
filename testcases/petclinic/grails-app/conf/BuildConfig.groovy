@@ -1,6 +1,6 @@
-grails.project.work.dir = "build"
-grails.project.test.reports.dir = "build/test"
-clover.reports.dir = "${grails.project.work.dir}/clover/report"
+//grails.project.work.dir = "build"
+//grails.project.test.reports.dir = "build/test"
+//clover.reports.dir = "${grails.project.work.dir}/clover/report"
 
 grails.plugin.location.clover = "../../"
 
@@ -8,9 +8,7 @@ grails.plugin.location.clover = "../../"
 clover {
 
   license.path="../../etc/clover-development.license"
-  includes = ["**/*.groovy"]
-  excludes = ["**/conf/**"]
-  srcDirs = ["grails-app", "src", "test"]
+  
 
 // TODO: investigate why the fileset appears to be ignored below...
 //  setuptask = { ant, binding, plugin ->
@@ -28,7 +26,7 @@ clover {
   // reporttask is a closure that gets passed a reference to the GantBuilder object.
   // any of Clover's report tasks, in fact any Ant Task, can be included.
   // this closure is invoked as soon as all tests have run
-  reporttask = { ant, binding, self ->
+  Xreporttask = { ant, binding, self ->
 
     ant.mkdir(dir: "${clover.reports.dir}")
 

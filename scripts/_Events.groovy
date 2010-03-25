@@ -1,6 +1,9 @@
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
+import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
+
+
 // some clover defaults
 defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
 defCloverIncludes = ["**/*.groovy", "**/*.java"];
@@ -9,6 +12,10 @@ defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming betwee
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
 defCloverHistorical = true; // by default, we will generate a historical report.
+defCloverSnapshotFile = new File(projectWorkDir, "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
+
+
+defStoredTestTargetPatterns = [];
 
 // HACK to work-around: http://jira.codehaus.org/browse/GRAILS-5755
 loadDependencyClass = {name ->
@@ -44,12 +51,12 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 
   toggleAntLogging(config)
 
-  if (config.on)
+  if (config.on || config.optimize) // automatically enable clover when optimizing
   {
 
     toggleCloverOn(config)
 
-    if (!config.containsKey('forceClean') || config.forceClean)
+    if ((!config.containsKey('forceClean') || config.forceClean) && !config.optimize) // do not clean when optimizing
     {
       // force a clean
       def webInf = "${basedir}/web-app/WEB-INF"
@@ -62,26 +69,130 @@ eventSetClasspath = {URLClassLoader rootLoader ->
   }
 }
 
-// copied from $GRAILS_HOME/scripts/_GrailsClean.groovy
+eventTestPhasesStart = {phase ->
 
-private def cleanCompiledSources()
-{
+//  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
+  defStoredTestTargetPatterns = testTargetPatterns;
+
+}
+//TODO uncomment this when http://jira.codehaus.org/browse/GRAILS-5755 is released
+static class FileOptimizable /**implements Optimizable**/ {
+
+  final File file;
+  final File baseDir;
+  public FileOptimizable(file, baseDir) {
+    this.file = file;
+    this.baseDir = baseDir;
+  }
+
+  public String getName() {
+    sourceFileToClassName(baseDir, file)
+  }
+
+  public String getClassName() {
+    sourceFileToClassName(baseDir, file)
+  }
+
+  /**
+   * Gets the corresponding class name for a source file of this test type.
+   *
+   * Copied from GrailsTestTypeSupport.groovy
+   */
+  String sourceFileToClassName(File sourceDir, File sourceFile) {
+    String relativePath = getRelativePathName(sourceDir, sourceFile)
+    def suffixPos = relativePath.lastIndexOf(".")
+    relativePath[0..(suffixPos - 1)].replace(File.separatorChar, '.' as char)
+  }
+
+  String getRelativePathName(File sourceDir, File sourceFile) {
+    def filePath = sourceFile.canonicalPath
+    def basePath = sourceDir.canonicalPath
+
+    if (!filePath.startsWith(basePath)) {
+      throw new IllegalArgumentException("File path (${filePath}) is not descendent of base path (${basePath}).")
+    }
+
+    def relativePath = filePath.substring(basePath.size() + 1)
+    return relativePath
+  }
 
 }
 
-eventStatusFinal = {msg ->
+eventTestCompileEnd = { type ->
 
+  def phasesToRun = [type.name]
+  ConfigObject config = mergeConfig()
+  if (config.optimize)
+  {
+
+    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
+    def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
+    def antInstrConfig = antInstrConfClass.getFrom(ant.project)
+
+    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
+    def optionsBuilderClass = loadDependencyClass('com.atlassian.clover.api.optimization.OptimizationOptions$Builder')
+    def builder = optionsBuilderClass.newInstance()
+    def options = builder.enabled(true).
+                                    debug(true).
+                                    initString(antInstrConfig.initString).
+                                    snapshot(defCloverSnapshotFile).build()
+
+    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
+    def optimizerClass = loadDependencyClass('com.atlassian.clover.api.optimization.TestOptimizer')
+
+    def optimizer = optimizerClass.newInstance(options)
+    // convert the testTargetPatterns into a list of optimizables...
+
+    List optimizables = new ArrayList()
+
+    // for each phase, gather source files and turn into optimizables
+    def optimizableClass = loadDependencyClass('com.atlassian.clover.api.optimization.Optimizable')
+
+    phasesToRun.each {phaseName ->
+
+      List<File> files = new LinkedList<File>()
+      defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName)) }
+
+      files.each {  optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
+
+    }
+
+    
+    List optimizedTests = optimizer.optimize(optimizables)
+
+    final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
+    optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.className))  }
+
+    testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];    
+  }
 }
 
-eventTestPhasesStart = {
+private String createTestPattern(String name) {
+  return name.endsWith("Tests") ? name.substring(0,name.lastIndexOf("Tests")) : name;
+}
 
+private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Binding binding, String phaseName) {
+  def sourceFiles = []
+  def resolveResources = binding['resolveResources']
+  def testSuffixes = ['']
+  def testExtensions = ["java", "groovy"]
+  def sourceDir = new File("test/${phaseName}")
+    
+  testSuffixes.each { suffix ->
+    testExtensions.each { extension ->
+      def resources = resolveResources("file:${sourceDir.absolutePath}/${targetPattern.filePattern}${suffix}.${extension}".toString())
+      sourceFiles.addAll(resources*.file.findAll { it.exists() }.toList())
+    }
+  }
+
+  sourceFiles
 }
 
 eventTestPhasesEnd = {
   ConfigObject config = mergeConfig()
   println "Clover: Tests ended"
 
-  if (!config.on)
+  if (!config.on && !config.optimize)
   {
     return;
   }
@@ -145,6 +256,13 @@ eventTestPhasesEnd = {
     config.reporttask(ant, binding, this)
   }
 
+  // TODO: if -clover.optimize, save a snapshot file to -clover.snapshotLocation
+
+  
+  if (config.optimize)
+  {
+    ant.'clover-snapshot'(file: defCloverSnapshotFile)
+  }
 
 }
 
@@ -222,28 +340,12 @@ def toggleCloverOn(ConfigObject clover)
         }
       }
     }
-
   }
-}
 
-/**
- * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
- */
-private def ConfigObject mergeConfig()
-{
-
-  final Map argsMap = parseArguments()
-  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
-
-  final ConfigSlurper slurper = new ConfigSlurper()
-  final Properties props = new Properties()
-  props.putAll(argsMap)
-
-  final ConfigObject argsMapConfig = slurper.parse(props)
-  config.merge(argsMapConfig.clover)
-
-  return config
-
+  if (clover.snapshotLocation) {
+    defCloverSnapshotFile = new File(clover.snapshotLocation);
+  }
+  
 }
 
 /**
@@ -346,6 +448,26 @@ private void toggleAntLogging(ConfigObject clover)
       }
     }
   }
+}
+
+/**
+ * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
+ */
+private def ConfigObject mergeConfig()
+{
+
+  final Map argsMap = parseArguments()
+  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
+
+  final ConfigSlurper slurper = new ConfigSlurper()
+  final Properties props = new Properties()
+  props.putAll(argsMap)
+
+  final ConfigObject argsMapConfig = slurper.parse(props)
+  config.merge(argsMapConfig.clover)
+
+  return config
+
 }
 
 // Copied from _GrailsArgParsing.groovy since _GrailsCompile.groovy does not depend on parseArguments target
