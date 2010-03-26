@@ -12,8 +12,7 @@ defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming betwee
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
 defCloverHistorical = true; // by default, we will generate a historical report.
-defCloverSnapshotFile = new File(projectWorkDir, "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
-
+defCloverSnapshotFile = new File("${projectWorkDir}", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
 
 defStoredTestTargetPatterns = [];
 
