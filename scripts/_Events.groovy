@@ -333,9 +333,11 @@ def toggleCloverOn(ConfigObject clover)
     ant.'clover-setup'(initString: initString, tmpDir: "${projectWorkDir}/clover/tmp") {
 
       cloverSrcDirs.each {dir ->
-        ant.fileset(dir: dir) {
-          cloverExcludes.each { exclude(name: it) }
-          cloverIncludes.each { include(name: it) }
+        if (new File(dir.toString()).exists()) {
+          ant.fileset(dir: dir) {
+            cloverExcludes.each { exclude(name: it) }
+            cloverIncludes.each { include(name: it) }
+          }
         }
       }
     }
