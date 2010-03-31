@@ -4,7 +4,7 @@ grails.project.test.reports.dir="build/test"
 clover {
   debug = false;
   on = false;
-  core.version = 'com.cenqua.clover:clover:3.0.0';
+  core.version = 'com.cenqua.clover:clover:3.0.1';
   license.path = "clover.license"
 }
 
