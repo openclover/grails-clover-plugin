@@ -75,7 +75,7 @@ eventTestPhasesStart = {phase ->
 
 }
 //TODO uncomment this when http://jira.codehaus.org/browse/GRAILS-5755 is released
-static class FileOptimizable /**implements Optimizable**/ {
+class FileOptimizable /**implements Optimizable**/ {
 
   final File file;
   final File baseDir;
