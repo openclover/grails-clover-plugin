@@ -1,13 +1,32 @@
-
-grails.plugin.location.clover = "../../"
+//uncomment for development
+//grails.plugin.location.clover = "../../"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails default dependencies
-    
+
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+        mavenLocal()
+        mavenCentral()
+    }
+
     dependencies {
         //compile "commons-codec:commons-codec:1.3"
         compile 'org.apache.ant:ant:1.7.1'
         compile 'org.apache.ant:ant-launcher:1.7.1'
+    }
+
+    plugins {
+        build ":bean-fields:0.4"
+        compile ":clover:3.1.6"
+        build ":fckeditor:0.9.4"
+        build ":navigation:1.1.1"
+        build ":quartz:0.4.1"
+        build ":searchable:0.5.5"
+        compile ":hibernate:1.3.0"
+        compile ":tomcat:1.3.0"
     }
 }
 

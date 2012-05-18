@@ -1,9 +1,28 @@
+//uncomment following line if you wish to develop without reinstalling clover plugin
+//grails.plugin.location.clover = "../../"
+
 //grails.project.work.dir = "build"
 //grails.project.test.reports.dir = "build/test"
 //clover.reports.dir = "${grails.project.work.dir}/clover/report"
 
-grails.plugin.location.clover = "../../"
+grails.project.dependency.resolution = {
+    inherits "global"
+    log      "warn"
 
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+        mavenLocal()
+        mavenCentral()
+    }
+
+    plugins {
+        build ":clover:3.1.6"
+        compile ":tomcat:1.3.0"
+        compile ":hibernate:1.3.0"
+    }
+}
 
 clover {
 

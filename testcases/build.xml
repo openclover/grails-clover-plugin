@@ -1,0 +1,79 @@
+<project basedir=".">
+    <property name="grails.dist.dir" value="../dist"/>
+    <property name="grails.clover.dir" value=".."/>
+    <property name="grails.clover.version" value="3.1.6"/>
+    <property name="exec.suffix" value=".bat"/> <!-- TODO add condition for "" for unixes -->
+    <property environment="env"/>
+
+    <target name="init">
+        <echoproperties />
+        <!-- Nothing to do -->
+    </target>
+
+    <target name="build">
+        <!-- Nothing to do -->
+    </target>
+
+    <!-- Requires:
+        grails.version - version of Grails framework, it's a part of ../../dist/grails-<ver>.zip filename
+        grails.clover.version - version of Clover for Grails plugin, it's a part of ../../grails-clover-<ver>.zip filename
+        project.name - name of the project to be tested - located in ./<project.name> directory
+    -->
+    <target name="_test-testcase">
+        <!-- Unzip grails framework from archive to temp dir -->
+        <unzip src="${grails.dist.dir}/grails-${grails.version}.zip" dest="${java.io.tmpdir}"/>
+        <property name="grails.temp.dir" value="${java.io.tmpdir}/grails-${grails.version}"/>
+
+        <!-- Remove trash from previous build -->
+        <delete dir="${basedir}/${project.name}/target"/>
+
+        <!-- grails test-app -clover.on -clover.view -->
+        <exec executable="${grails.temp.dir}/bin/grails${exec.suffix}" dir="${basedir}/${project.name}">
+            <arg value="-Dgrails.project.work.dir=${grails.temp.dir}/.grails"/>
+            <arg value="-Divy.default.ivy.user.dir=${grails.temp.dir}/.ivy2"/>
+            <arg value="test-app"/>
+            <arg value="-clover.on"/>
+            <!--<arg value="-clover.view"/>-->
+            <!--<env key="PATH" path="${grails.temp.dir}/bin:${java.library.path}"/>-->
+        </exec>
+        <delete dir="${grails.temp.dir}"/>
+    </target>
+
+    <target name="test">
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="1.3.0"/>
+            <param name="project.name" value="petclinic"/>
+        </antcall>
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="1.3.0"/>
+            <param name="project.name" value="weceem"/>
+        </antcall>
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="1.3.8"/>
+            <param name="project.name" value="daily-groove"/>
+        </antcall>
+        <!-- <antcall target="_test-testcase">
+            <param name="grails.version" value="2.0.3"/>
+            <param name="project.name" value="xxx"/>
+        </antcall> -->
+    </target>
+
+    <target name="_clean-testcase">
+        <delete dir="${basedir}/${project.name}/target"/>
+    </target>
+
+    <target name="clean">
+        <antcall target="_clean-testcase">
+            <param name="project.name" value="petclinic"/>
+        </antcall>
+        <antcall target="_clean-testcase">
+            <param name="project.name" value="weceem"/>
+        </antcall>
+        <antcall target="_clean-testcase">
+            <param name="project.name" value="daily-groove"/>
+        </antcall>
+        <!-- <antcall target="_clean-testcase">
+            <param name="project.name" value="xxx"/>
+        </antcall> -->
+    </target>
+</project>
