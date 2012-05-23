@@ -25,8 +25,8 @@ grails.project.dependency.resolution = {
         build ":navigation:1.1.1"
         build ":quartz:0.4.1"
         build ":searchable:0.5.5"
-        compile ":hibernate:1.3.0"
-        compile ":tomcat:1.3.0"
+        compile ":hibernate:1.3.8"
+        compile ":tomcat:1.3.8"
     }
 }
 
