@@ -18,16 +18,20 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build ":clover:3.1.6"
-        build ":tomcat:1.3.7"
         compile ":redis:1.0.0.M4"
-        compile ":jquery:1.4.4.1"
         runtime ":blueprint:1.0.2"
         runtime ":quartz:0.4.2"
-        runtime ":resources:1.0-RC2-SNAPSHOT"
-        runtime ":cached-resources:1.0-alpha6"
-        runtime ":zipped-resources:1.0-RC1"
-        runtime ":hibernate:1.3.7"
+        runtime ":resources:1.0.2"
+        runtime(":cached-resources:1.0") {
+          exclude "resources"
+          exclude "cache-headers"
+        }
+        runtime(":zipped-resources:1.0") {
+          exclude "resources"
+        }
+        runtime ":hibernate:1.3.8"
+        build ":clover:3.1.6"
+        build ":tomcat:1.3.8"
     }
     dependencies {
     }

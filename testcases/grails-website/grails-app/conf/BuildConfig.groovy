@@ -23,6 +23,12 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
+        build(":clover:3.1.6") {
+          // set to changing so that our test case will always fetch the latest build from ~/.m2 cache,
+          // and put into own ~/.grails/ivy-cache dir
+          changing = true
+        }
+
         compile ":burning-image:0.5.0",
                 ":commentable:0.7.6",
                 ":joda-time:1.3.1",

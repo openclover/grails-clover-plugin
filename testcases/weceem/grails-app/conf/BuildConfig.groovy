@@ -20,7 +20,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         build ":bean-fields:0.4"
-        compile ":clover:3.1.6"
+        build ":clover:3.1.6"
         build ":fckeditor:0.9.4"
         build ":navigation:1.1.1"
         build ":quartz:0.4.1"
@@ -30,7 +30,8 @@ grails.project.dependency.resolution = {
     }
 }
 
-clover.reports.dir = "build/clover/report"
+clover.reports.dir = "target/clover/report"
+
 clover {
 
   license.path="../../etc/clover-development.license"
