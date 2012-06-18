@@ -3,6 +3,10 @@ import org.apache.tools.ant.Project
 
 import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 
+import com.cenqua.clover.tasks.AntInstrumentationConfig
+import com.atlassian.clover.api.optimization.Optimizable
+import com.atlassian.clover.api.optimization.OptimizationOptions
+import com.atlassian.clover.api.optimization.TestOptimizer
 
 // some clover defaults
 defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
@@ -16,19 +20,6 @@ defCloverSnapshotFile = new File("${projectWorkDir}", "clover.snapshot") // this
 
 defStoredTestTargetPatterns = [];
 
-// HACK to work-around: http://jira.codehaus.org/browse/GRAILS-5755
-loadDependencyClass = {name ->
-  def doLoad = { -> classLoader.loadClass(name) }
-  try {
-    doLoad()
-  } catch (ClassNotFoundException e) {
-    includeTargets << grailsScript("_GrailsCompile")
-    compile()
-    doLoad()
-  }
-}
-
-
 eventCompileStart = {kind ->
   ConfigObject config = mergeConfig()
   // Ants Project is available via: kind.ant.project
@@ -37,7 +28,6 @@ eventCompileStart = {kind ->
 }
 
 eventSetClasspath = {URLClassLoader rootLoader ->
-
 //  grailsSettings.compileDependencies.each { println it }
 
   ConfigObject config = mergeConfig()
@@ -74,8 +64,8 @@ eventTestPhasesStart = {phase ->
   defStoredTestTargetPatterns = testTargetPatterns;
 
 }
-//TODO uncomment this when http://jira.codehaus.org/browse/GRAILS-5755 is released
-class FileOptimizable /**implements Optimizable**/ {
+
+class FileOptimizable implements Optimizable {
 
   final File file;
   final File baseDir;
@@ -118,35 +108,26 @@ class FileOptimizable /**implements Optimizable**/ {
 }
 
 eventTestCompileEnd = { type ->
+  println "Clover: Test source compilation phase ended"
 
   def phasesToRun = [type.name]
   ConfigObject config = mergeConfig()
   if (config.optimize)
   {
-
-    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
-    def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
-    def antInstrConfig = antInstrConfClass.getFrom(ant.project)
-
-    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
-    def optionsBuilderClass = loadDependencyClass('com.atlassian.clover.api.optimization.OptimizationOptions$Builder')
-    def builder = optionsBuilderClass.newInstance()
+    def antInstrConfig = AntInstrumentationConfig.getFrom(ant.project)
+    def builder = OptimizationOptions.Builder.newInstance()
     def options = builder.enabled(true).
                                     debug(true).
                                     initString(antInstrConfig.initString).
                                     snapshot(defCloverSnapshotFile).build()
 
-    //TODO import this class when http://jira.codehaus.org/browse/GRAILS-5755 is released
-    def optimizerClass = loadDependencyClass('com.atlassian.clover.api.optimization.TestOptimizer')
+    println "Clover: Configuring test optimization with options " + options.toString()
+    def optimizer = TestOptimizer.newInstance(options)
 
-    def optimizer = optimizerClass.newInstance(options)
     // convert the testTargetPatterns into a list of optimizables...
-
     List optimizables = new ArrayList()
 
     // for each phase, gather source files and turn into optimizables
-    def optimizableClass = loadDependencyClass('com.atlassian.clover.api.optimization.Optimizable')
-
     phasesToRun.each {phaseName ->
 
       List<File> files = new LinkedList<File>()
@@ -208,17 +189,19 @@ eventTestPhasesEnd = {
   {
     if (!config.historypointtask)
     {
+      println "Clover: Generating history point using default 'clover-historypoint' task"
       ant.'clover-historypoint'(historyDir: historyDir)
     }
     else
     {
+      println "Clover: Generating history point using custom 'config.historypointtask' closure"
       config.historypointtask(ant, binding)
     }
   }
 
   if (!config.reporttask)
   {
-
+    println "Clover: Generating report using default 'clover-report' task"
     ant.'clover-report' {
       ant.current(outfile: reportLocation, title: config.title ?: defCloverReportTitle) {
         format(type: "html")
@@ -252,6 +235,7 @@ eventTestPhasesEnd = {
     // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
     // this closure can be used to generate a custom html report.
     // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
+    println "Clover: Generating report using custom 'config.reporttask' closure"
     config.reporttask(ant, binding, this)
   }
 
@@ -260,6 +244,7 @@ eventTestPhasesEnd = {
   
   if (config.optimize)
   {
+    println "Clover: Saving optimization snapshot"
     ant.'clover-snapshot'(file: defCloverSnapshotFile)
   }
 
@@ -288,35 +273,34 @@ public def launchReport(def reportLocation )
     }
 
     String openLoc = openFile.toURI().toString()
-    println "About to launch: ${openLoc}"
+    println "Clover: About to launch broswer: ${openLoc}"
     com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
   }
 }
 
 def toggleCloverOn(ConfigObject clover)
 {
-
   configureLicense(clover)
 
   ant.taskdef(resource: 'cloverlib.xml')
   ant.'clover-env'()
 
   // create an AntInstrumentationConfig object, and set this on the ant project
-  def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
+  // def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
 
-  def antConfig = antInstrConfClass.newInstance(ant.project)
+  def antConfig = AntInstrumentationConfig.newInstance(ant.project)
   configureAntInstr(clover, antConfig)
   antConfig.setIn ant.project
 
   if (clover.setuptask)
   {
-    println "Using custom clover-setup configuration."
+    println "Clover: using custom clover-setup configuration."
 
     clover.setuptask(ant, binding, this)
   }
   else
   {
-    println "Using default clover-setup configuration."
+    println "Clover: using default clover-setup configuration."
 
     final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
     antConfig.initstring = initString
@@ -437,6 +421,11 @@ private def configureLicense(ConfigObject clover)
   }
 }
 
+/**
+ * Sets ant logging level to MSG_DEBUG or MSG_VERBOSE depending whether
+ * clover.debug=true or clover.verbose=true properties are set.
+ * @param clover
+ */
 private void toggleAntLogging(ConfigObject clover)
 {
 // get any BuildListeners and turn logging on
@@ -448,6 +437,17 @@ private void toggleAntLogging(ConfigObject clover)
         listener.messageOutputLevel = Project.MSG_DEBUG
       }
     }
+    println "Clover ant task logging level set to DEBUG"
+
+  } else if (clover.verbose) {
+    ant.project.buildListeners.each {listener ->
+      if (listener instanceof BuildLogger)
+      {
+        listener.messageOutputLevel = Project.MSG_VERBOSE
+      }
+    }
+    println "Clover ant task logging level set to VERBOSE"
+
   }
 }
 
@@ -509,4 +509,17 @@ private Map parseArguments()
     isInteractive = !(argsMap.'non-interactive')
   }
   return argsMap
+}
+
+/**
+ * Initialize Clover stuff as soon as plugin is installed. We don't do this in _Install.groovy script,
+ * because we need access to project configuration object as well as global variables from _Events.groovy.
+ */
+eventPluginInstalled = { fullPluginName ->
+  if ( ((String)fullPluginName).startsWith("clover-")) {
+    println "Clover: Plugin was installed, loading new Ant task definitions ..."
+    // Call event callback internally in order to load clover task definitions,
+    // toggle on Clover, set global variables like source paths etc
+    eventSetClasspath(null)
+  }
 }
