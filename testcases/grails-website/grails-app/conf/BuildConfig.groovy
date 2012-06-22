@@ -19,7 +19,7 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenLocal()
         mavenCentral()
-        mavenRepo "https://oss.sonatype.org/content/repositories/releases/" 
+        mavenRepo "https://oss.sonatype.org/content/repositories/releases/"
     }
 
     plugins {

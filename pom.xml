@@ -1,0 +1,25 @@
+<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.grails.plugins</groupId>
+  <artifactId>clover</artifactId>
+  <packaging>zip</packaging>
+  <version>3.1.6</version>
+  <name>Clover Code Coverage for Grails</name>
+  <description>\
+A plugin that integrates Clover into GRAILS projects.
+Clover is a Code Coverage tool that produces beautiful reports which are highly configurable and extensible.
+Clover not only reports which lines of code were executed during a test run, it also reports which tests hit which lines of code.
+Clover's reports include:
+* Tag Clouds of your entire project that compare Complexity with Coverage
+* A TreeMap to visualise the most complex, uncovered areas of your project
+* Fully Cross Referenced HTML view of your source code
+* Much more: See http://atlassian.com/clover 
+</description>
+  <url>http://grails.org/Clover+Plugin</url>
+  <developers>
+    <developer>
+      <name>Atlassian</name>
+      <email>support@atlassian.com</email>
+    </developer>
+  </developers>
+</project>

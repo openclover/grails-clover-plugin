@@ -13,12 +13,13 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         grailsCentral()
+        grailsRepo "http://plugins.grails.org"
         mavenLocal()
         mavenCentral()
     }
 
     plugins {
-        build ":clover:3.1.6"
+        compile ":clover:3.1.6"
         compile ":tomcat:1.3.0"
         compile ":hibernate:1.3.0"
     }

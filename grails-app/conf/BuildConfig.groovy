@@ -30,8 +30,4 @@ grails.project.dependency.resolution = {
         compile(clover.core.version)
         runtime(clover.core.version)
     }
-
-    plugins {
-         build ":maven-publisher:0.8.1"
-    }
 }
