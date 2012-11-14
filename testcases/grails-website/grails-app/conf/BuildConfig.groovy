@@ -23,7 +23,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build(":clover:3.1.6") {
+        build(":clover:3.1.8") {
           // set to changing so that our test case will always fetch the latest build from ~/.m2 cache,
           // and put into own ~/.grails/ivy-cache dir
           changing = true
