@@ -21,232 +21,228 @@ defCloverSnapshotFile = new File("${projectWorkDir}", "clover.snapshot") // this
 defStoredTestTargetPatterns = [];
 
 eventCompileStart = {kind ->
-  ConfigObject config = mergeConfig()
-  // Ants Project is available via: kind.ant.project
-  println "Clover: Compile start."
-  System.setProperty "grover.ast.dump", "" + config.dumpAST
+    ConfigObject config = mergeConfig()
+    // Ants Project is available via: kind.ant.project
+    if (config.on && config.debug) {
+        println "Clover: Compile start. Setting 'grover.ast.dump=" + config.dumpAST + "' system property."
+    }
+    System.setProperty("grover.ast.dump", "" + config.dumpAST)
 }
 
 eventSetClasspath = {URLClassLoader rootLoader ->
 //  grailsSettings.compileDependencies.each { println it }
 
-  ConfigObject config = mergeConfig()
-  println "Clover: Using config: ${config}"
+    ConfigObject config = mergeConfig()
 
-  if (config.debug) {
-    println "Clover: Dumping binding variables:"
-    binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
-  }
-
-  toggleAntLogging(config)
-
-  if (config.on || config.optimize) // automatically enable clover when optimizing
-  {
-
-    toggleCloverOn(config)
-
-    if ((!config.containsKey('forceClean') || config.forceClean) && !config.optimize) // do not clean when optimizing
-    {
-      // force a clean
-      def webInf = "${basedir}/web-app/WEB-INF"
-      def cleanDirs = ["${webInf}/classes", "${webInf}/lib", "${projectWorkDir}/gspcompile", classesDirPath, testDirPath, "${projectWorkDir}/clover"]
-
-      println "Clover: Forcing a clean to ensure Clover instrumentation occurs. Disable by setting: clover.forceClean=false "
-      cleanDirs.each {ant.delete(dir: it, failonerror: false)}
-
+    if (config.debug) {
+        println "Clover: Dumping binding variables:"
+        binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
     }
-  }
+
+    toggleAntLogging(config)
+
+    // automatically enable clover when optimizing
+    if (config.on || config.optimize) {
+        println "Clover: Clover is enabled. Configuration: ${config}"
+        toggleCloverOn(config)
+
+        // do not clean when optimizing or when user explicitly set clover.forceClean=false
+        if ((!config.containsKey('forceClean') || config.forceClean) && !config.optimize) {
+            // force a clean
+            def webInf = "${basedir}/web-app/WEB-INF"
+            def cleanDirs = ["${webInf}/classes", "${webInf}/lib", "${projectWorkDir}/gspcompile", classesDirPath, testDirPath, "${projectWorkDir}/clover"]
+
+            println "Clover: Forcing a clean to ensure Clover instrumentation occurs. Disable by setting: clover.forceClean=false "
+            cleanDirs.each {
+                ant.delete(dir: it, failonerror: false)
+            }
+        }
+    }
 }
 
 eventTestPhasesStart = {phase ->
 
 //  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
-  defStoredTestTargetPatterns = testTargetPatterns;
+    defStoredTestTargetPatterns = testTargetPatterns;
 
 }
 
 class FileOptimizable implements Optimizable {
 
-  final File file;
-  final File baseDir;
-  public FileOptimizable(file, baseDir) {
-    this.file = file;
-    this.baseDir = baseDir;
-  }
+    final File file;
+    final File baseDir;
 
-  public String getName() {
-    sourceFileToClassName(baseDir, file)
-  }
-
-  public String getClassName() {
-    sourceFileToClassName(baseDir, file)
-  }
-
-  /**
-   * Gets the corresponding class name for a source file of this test type.
-   *
-   * Copied from GrailsTestTypeSupport.groovy
-   */
-  String sourceFileToClassName(File sourceDir, File sourceFile) {
-    String relativePath = getRelativePathName(sourceDir, sourceFile)
-    def suffixPos = relativePath.lastIndexOf(".")
-    relativePath[0..(suffixPos - 1)].replace(File.separatorChar, '.' as char)
-  }
-
-  String getRelativePathName(File sourceDir, File sourceFile) {
-    def filePath = sourceFile.canonicalPath
-    def basePath = sourceDir.canonicalPath
-
-    if (!filePath.startsWith(basePath)) {
-      throw new IllegalArgumentException("File path (${filePath}) is not descendent of base path (${basePath}).")
+    public FileOptimizable(file, baseDir) {
+        this.file = file;
+        this.baseDir = baseDir;
     }
 
-    def relativePath = filePath.substring(basePath.size() + 1)
-    return relativePath
-  }
+    public String getName() {
+        sourceFileToClassName(baseDir, file)
+    }
+
+    public String getClassName() {
+        sourceFileToClassName(baseDir, file)
+    }
+
+    /**
+     * Gets the corresponding class name for a source file of this test type.
+     *
+     * Copied from GrailsTestTypeSupport.groovy
+     */
+    String sourceFileToClassName(File sourceDir, File sourceFile) {
+        String relativePath = getRelativePathName(sourceDir, sourceFile)
+        def suffixPos = relativePath.lastIndexOf(".")
+        relativePath[0..(suffixPos - 1)].replace(File.separatorChar, '.' as char)
+    }
+
+    String getRelativePathName(File sourceDir, File sourceFile) {
+        def filePath = sourceFile.canonicalPath
+        def basePath = sourceDir.canonicalPath
+
+        if (!filePath.startsWith(basePath)) {
+            throw new IllegalArgumentException("File path (${filePath}) is not descendent of base path (${basePath}).")
+        }
+
+        def relativePath = filePath.substring(basePath.size() + 1)
+        return relativePath
+    }
 
 }
 
 eventTestCompileEnd = { type ->
-  println "Clover: Test source compilation phase ended"
 
-  def phasesToRun = [type.name]
-  ConfigObject config = mergeConfig()
-  if (config.optimize)
-  {
-    def antInstrConfig = AntInstrumentationConfig.getFrom(ant.project)
-    def builder = OptimizationOptions.Builder.newInstance()
-    def options = builder.enabled(true).
-                                    debug(true).
-                                    initString(antInstrConfig.initString).
-                                    snapshot(defCloverSnapshotFile).build()
+    def phasesToRun = [type.name]
+    ConfigObject config = mergeConfig()
+    if (config.optimize) {
+        println "Clover: Test source compilation phase ended"
 
-    println "Clover: Configuring test optimization with options " + options.toString()
-    def optimizer = TestOptimizer.newInstance(options)
+        def antInstrConfig = AntInstrumentationConfig.getFrom(ant.project)
+        def builder = OptimizationOptions.Builder.newInstance()
+        def options = builder.enabled(true).
+                debug(true).
+                initString(antInstrConfig.initString).
+                snapshot(defCloverSnapshotFile).build()
 
-    // convert the testTargetPatterns into a list of optimizables...
-    List optimizables = new ArrayList()
+        println "Clover: Configuring test optimization with options " + options.toString()
+        def optimizer = TestOptimizer.newInstance(options)
 
-    // for each phase, gather source files and turn into optimizables
-    phasesToRun.each {phaseName ->
+        // convert the testTargetPatterns into a list of optimizables...
+        List optimizables = new ArrayList()
 
-      List<File> files = new LinkedList<File>()
-      defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName)) }
+        // for each phase, gather source files and turn into optimizables
+        phasesToRun.each {phaseName ->
 
-      files.each {  optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
+            List<File> files = new LinkedList<File>()
+            defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName)) }
 
+            files.each { optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
+
+        }
+
+
+        List optimizedTests = optimizer.optimize(optimizables)
+
+        final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
+        optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.className)) }
+
+        testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];
     }
-
-    
-    List optimizedTests = optimizer.optimize(optimizables)
-
-    final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
-    optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.className))  }
-
-    testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];    
-  }
 }
 
 private String createTestPattern(String name) {
-  return name.endsWith("Tests") ? name.substring(0,name.lastIndexOf("Tests")) : name;
+    return name.endsWith("Tests") ? name.substring(0, name.lastIndexOf("Tests")) : name;
 }
 
 private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Binding binding, String phaseName) {
-  def sourceFiles = []
-  def resolveResources = binding['resolveResources']
-  def testSuffixes = ['']
-  def testExtensions = ["java", "groovy"]
-  def sourceDir = new File("test/${phaseName}")
-    
-  testSuffixes.each { suffix ->
-    testExtensions.each { extension ->
-      def resources = resolveResources("file:${sourceDir.absolutePath}/${targetPattern.filePattern}${suffix}.${extension}".toString())
-      sourceFiles.addAll(resources*.file.findAll { it.exists() }.toList())
-    }
-  }
+    def sourceFiles = []
+    def resolveResources = binding['resolveResources']
+    def testSuffixes = ['']
+    def testExtensions = ["java", "groovy"]
+    def sourceDir = new File("test/${phaseName}")
 
-  sourceFiles
+    testSuffixes.each { suffix ->
+        testExtensions.each { extension ->
+            def resources = resolveResources("file:${sourceDir.absolutePath}/${targetPattern.filePattern}${suffix}.${extension}".toString())
+            sourceFiles.addAll(resources*.file.findAll { it.exists() }.toList())
+        }
+    }
+
+    sourceFiles
 }
 
 eventTestPhasesEnd = {
-  ConfigObject config = mergeConfig()
-  println "Clover: Tests ended"
-
-  if (!config.on && !config.optimize)
-  {
-    return;
-  }
-
-  def historyDir = config.historydir ?: defCloverHistoryDir
-  def reportLocation = config.reportdir ?: defCloverReportDir
-
-  def historical = defCloverHistorical
-  if (config.historical != null) {
-    historical = config.historical
-  }
-
-  if (historical)
-  {
-    if (!config.historypointtask)
-    {
-      println "Clover: Generating history point using default 'clover-historypoint' task"
-      ant.'clover-historypoint'(historyDir: historyDir)
+    ConfigObject config = mergeConfig()
+    if (!config.on && !config.optimize) {
+        return;
     }
-    else
-    {
-      println "Clover: Generating history point using custom 'config.historypointtask' closure"
-      config.historypointtask(ant, binding)
-    }
-  }
 
-  if (!config.reporttask)
-  {
-    println "Clover: Generating report using default 'clover-report' task"
-    ant.'clover-report' {
-      ant.current(outfile: reportLocation, title: config.title ?: defCloverReportTitle) {
-        format(type: "html")
-        ant.columns {
-          lineCount()
-          filteredElements()
-          uncoveredElements()
-          totalPercentageCovered()
+    println "Clover: Tests ended. Generating reports"
+
+    def historyDir = config.historydir ?: defCloverHistoryDir
+    def reportLocation = config.reportdir ?: defCloverReportDir
+
+    def historical = defCloverHistorical
+    if (config.historical != null) {
+        historical = config.historical
+    }
+
+    if (historical) {
+        if (!config.historypointtask) {
+            println "Clover: Generating history point using default 'clover-historypoint' task"
+            ant.'clover-historypoint'(historyDir: historyDir)
         }
-      }
-      if (historical) {
-        ant.historical(outfile: reportLocation, historyDir: historyDir)
-      }
-      ant.current(outfile: "${reportLocation}/clover.xml") {
-        format(type: "xml")
-      }
-      if (config.json) {
-        ant.current(outfile: reportLocation) {
-          format(type: "json")
+        else {
+            println "Clover: Generating history point using custom 'config.historypointtask' closure"
+            config.historypointtask(ant, binding)
         }
-      }
     }
 
+    if (!config.reporttask) {
+        println "Clover: Generating report using default 'clover-report' task"
+        ant.'clover-report' {
+            ant.current(outfile: reportLocation, title: config.title ?: defCloverReportTitle) {
+                format(type: "html")
+                ant.columns {
+                    lineCount()
+                    filteredElements()
+                    uncoveredElements()
+                    totalPercentageCovered()
+                }
+            }
+            if (historical) {
+                ant.historical(outfile: reportLocation, historyDir: historyDir)
+            }
+            ant.current(outfile: "${reportLocation}/clover.xml") {
+                format(type: "xml")
+            }
+            if (config.json) {
+                ant.current(outfile: reportLocation) {
+                    format(type: "json")
+                }
+            }
+        }
 
-    if (config.view) {
-      launchReport(reportLocation)
+
+        if (config.view) {
+            launchReport(reportLocation)
+        }
+
+    } else {
+        // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
+        // this closure can be used to generate a custom html report.
+        // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
+        println "Clover: Generating report using custom 'config.reporttask' closure"
+        config.reporttask(ant, binding, this)
     }
-  }
-  else
-  {
-    // reporttask is a user defined closure that takes a single parameter that is a reference to the org.codehaus.gant.GantBuilder instance.
-    // this closure can be used to generate a custom html report.
-    // see : http://groovy.codehaus.org/Using+Ant+from+Groovy
-    println "Clover: Generating report using custom 'config.reporttask' closure"
-    config.reporttask(ant, binding, this)
-  }
 
-  // TODO: if -clover.optimize, save a snapshot file to -clover.snapshotLocation
+    // TODO: if -clover.optimize, save a snapshot file to -clover.snapshotLocation
 
-  
-  if (config.optimize)
-  {
-    println "Clover: Saving optimization snapshot"
-    ant.'clover-snapshot'(file: defCloverSnapshotFile)
-  }
+
+    if (config.optimize) {
+        println "Clover: Saving optimization snapshot"
+        ant.'clover-snapshot'(file: defCloverSnapshotFile)
+    }
 
 }
 
@@ -255,170 +251,148 @@ eventTestPhasesEnd = {
  *
  * If only a single test was run, then just that test's page will be shown.
  * Otherwise, the dashboard page is displayed. This is useful if using IDEA/Eclipse to run grails tests.
- * 
+ *
  * @param reportLocation the directory containing the report to launch
  * @return
  */
-public def launchReport(def reportLocation )
-{
-  File openFile = new File(reportLocation, "index.html")
-  if (openFile.exists())
-  {
-    if (testNames.size() > 0) // if there is a wildcard in the testname, we can't do anything...
-    {
-      String testName = testNames[0].replace((char)'.', File.separatorChar)
-      String suffix = testName.toString().endsWith("Tests") ? "" : "Tests"
-      File testFile = new File(reportLocation, testName + suffix + ".html")
-      openFile = testFile.exists() ? testFile : openFile
-    }
+public def launchReport(def reportLocation) {
+    File openFile = new File(reportLocation, "index.html")
+    if (openFile.exists()) {
+        // if there is a wildcard in the testname, we can't do anything...
+        if (testNames.size() > 0) {
+            String testName = testNames[0].replace((char) '.', File.separatorChar)
+            String suffix = testName.toString().endsWith("Tests") ? "" : "Tests"
+            File testFile = new File(reportLocation, testName + suffix + ".html")
+            openFile = testFile.exists() ? testFile : openFile
+        }
 
-    String openLoc = openFile.toURI().toString()
-    println "Clover: About to launch broswer: ${openLoc}"
-    com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
-  }
+        String openLoc = openFile.toURI().toString()
+        println "Clover: About to launch broswer: ${openLoc}"
+        com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
+    }
 }
 
-def toggleCloverOn(ConfigObject clover)
-{
-  configureLicense(clover)
+def toggleCloverOn(ConfigObject clover) {
+    configureLicense(clover)
 
-  ant.taskdef(resource: 'cloverlib.xml')
-  ant.'clover-env'()
+    ant.taskdef(resource: 'cloverlib.xml')
+    ant.'clover-env'()
 
-  // create an AntInstrumentationConfig object, and set this on the ant project
-  // def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
+    // create an AntInstrumentationConfig object, and set this on the ant project
+    // def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
 
-  def antConfig = AntInstrumentationConfig.newInstance(ant.project)
-  configureAntInstr(clover, antConfig)
-  antConfig.setIn ant.project
+    def antConfig = AntInstrumentationConfig.newInstance(ant.project)
+    configureAntInstr(clover, antConfig)
+    antConfig.setIn ant.project
 
-  if (clover.setuptask)
-  {
-    println "Clover: using custom clover-setup configuration."
+    if (clover.setuptask) {
+        println "Clover: using custom clover-setup configuration."
+        clover.setuptask(ant, binding, this)
+    } else {
+        println "Clover: using default clover-setup configuration."
 
-    clover.setuptask(ant, binding, this)
-  }
-  else
-  {
-    println "Clover: using default clover-setup configuration."
+        final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
+        antConfig.initstring = initString
 
-    final String initString = clover.get("initstring") != null ? clover.initstring : "${projectWorkDir}/clover/db/clover.db"
-    antConfig.initstring = initString
+        def cloverSrcDirs = clover.srcDirs ? clover.srcDirs : this.defCloverSrcDirs
+        def cloverIncludes = clover.includes ? clover.includes : this.defCloverIncludes
+        def cloverExcludes = clover.excludes ? clover.excludes : this.defCloverExcludes
 
-    def cloverSrcDirs = clover.srcDirs ? clover.srcDirs : this.defCloverSrcDirs
-    def cloverIncludes = clover.includes ? clover.includes : this.defCloverIncludes
-    def cloverExcludes = clover.excludes ? clover.excludes : this.defCloverExcludes
-
-    println """Clover:
+        println """Clover:
                directories: ${cloverSrcDirs}
                includes:    ${cloverIncludes}
                excludes     ${cloverExcludes}"""
 
-    ant.'clover-setup'(initString: initString, tmpDir: "${projectWorkDir}/clover/tmp") {
+        ant.'clover-setup'(initString: initString, tmpDir: "${projectWorkDir}/clover/tmp") {
 
-      cloverSrcDirs.each {dir ->
-        if (new File(dir.toString()).exists()) {
-          ant.fileset(dir: dir) {
-            cloverExcludes.each { exclude(name: it) }
-            cloverIncludes.each { include(name: it) }
-          }
+            cloverSrcDirs.each {dir ->
+                if (new File(dir.toString()).exists()) {
+                    ant.fileset(dir: dir) {
+                        cloverExcludes.each { exclude(name: it) }
+                        cloverIncludes.each { include(name: it) }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  if (clover.snapshotLocation) {
-    defCloverSnapshotFile = new File(clover.snapshotLocation);
-  }
-  
+    if (clover.snapshotLocation) {
+        defCloverSnapshotFile = new File(clover.snapshotLocation);
+    }
+
 }
 
 /**
  * Populates an AntInstrumentationConfig instance with any matching properties in the ConfigObject.
- *
- * Currently only primitive boolean, int and long are supported.
- * As are String.
- *
+ * Currently only primitive boolean, int and long are supported. As are String.
  */
-private def configureAntInstr(ConfigObject clover, def antConfig)
-{
+private def configureAntInstr(ConfigObject clover, def antConfig) {
 
-  return clover.each {
+    return clover.each {
 
-    if (antConfig.getProperties().containsKey(it.key))
-    {
+        if (antConfig.getProperties().containsKey(it.key)) {
 
-      String setter = MetaProperty.getSetterName(it.key)
-      MetaProperty property = antConfig.metaClass.getMetaProperty(it.key.toString())
+            String setter = MetaProperty.getSetterName(it.key)
+            MetaProperty property = antConfig.metaClass.getMetaProperty(it.key.toString())
 
-      final def val;
-      switch (property.type)
-      {
-        case Integer.class.getPrimitiveClass("int"):
-          val = it.value.toInteger()
-          break;
-        case Long.class.getPrimitiveClass("long"):
-          val = it.value.toLong()
-          break;
-        case Boolean.class.getPrimitiveClass("boolean"):
-          val = (it.value == null || Boolean.parseBoolean(it.value.toString()))
-          break;
-        case File.class:
-          val = new File(it.value.toString())
-          break;
-        default:
-          val = it.value
-      }
+            final def val;
+            switch (property.type) {
+                case Integer.class.getPrimitiveClass("int"):
+                    val = it.value.toInteger()
+                    break;
+                case Long.class.getPrimitiveClass("long"):
+                    val = it.value.toLong()
+                    break;
+                case Boolean.class.getPrimitiveClass("boolean"):
+                    val = (it.value == null || Boolean.parseBoolean(it.value.toString()))
+                    break;
+                case File.class:
+                    val = new File(it.value.toString())
+                    break;
+                default:
+                    val = it.value
+            }
 
-      antConfig.invokeMethod(setter, val)
+            antConfig.invokeMethod(setter, val)
+        }
     }
-  }
 }
 
-private def configureLicense(ConfigObject clover)
-{
+private def configureLicense(ConfigObject clover) {
 // the directories to search for a clover.license file
-  final String[] licenseSearchPaths = ["${userHome}", "${basedir}", "${basedir}/etc", "${grailsWorkDir}"]
+    final String[] licenseSearchPaths = ["${userHome}", "${basedir}", "${basedir}/etc", "${grailsWorkDir}"]
 
-  // the name of the system property that holds the clover license file
-  final LICENSE_PROP = 'clover.license.path'
+    // the name of the system property that holds the clover license file
+    final LICENSE_PROP = 'clover.license.path'
 
-  final license;
-  if (clover.license.path)
-  {
-    license = clover.license.path
-  }
-  else
-  {
-
-    licenseSearchPaths.each {
-      final String licensePath = "${it}/clover.license"
-      if (new File(licensePath).exists())
-      {
-        license = licensePath;
-        return;
-      }
+    final license;
+    if (clover.license.path) {
+        license = clover.license.path
+    } else {
+        licenseSearchPaths.each {
+            final String licensePath = "${it}/clover.license"
+            if (new File(licensePath).exists()) {
+                license = licensePath;
+                return;
+            }
+        }
     }
-  }
 
-  // check for a bundled eval clover license
-  def cloverPluginDir = binding.variables["cloverPluginDir"]
-  final File evalLicense = new File(cloverPluginDir, "grails-app/conf/clover/clover-evaluation.license")
-  if (!license && evalLicense.exists()) {
-    license = evalLicense.getAbsolutePath()
-  }
+    // check for a bundled eval clover license
+    def cloverPluginDir = binding.variables["cloverPluginDir"]
+    final File evalLicense = new File(cloverPluginDir, "grails-app/conf/clover/clover-evaluation.license")
+    if (!license && evalLicense.exists()) {
+        license = evalLicense.getAbsolutePath()
+    }
 
-  if (!license)
-  {
-    println """
-               No clover.license configured. Please define license.path=/path/to/clover.license in the
-               clover configuration in conf/BuildConfig.groovy"""
-  }
-  else
-  {
-    System.setProperty LICENSE_PROP, license
-    println "Using clover license path: ${System.getProperty LICENSE_PROP}"
-  }
+    if (!license) {
+        println """
+               Clover: License is not configured. Please define clover.license.path=/path/to/clover.license
+               in configuration in grails-app/conf/BuildConfig.groovy"""
+    } else {
+        System.setProperty LICENSE_PROP, license
+        println "Clover: Using Clover license path: ${System.getProperty LICENSE_PROP}"
+    }
 }
 
 /**
@@ -426,48 +400,43 @@ private def configureLicense(ConfigObject clover)
  * clover.debug=true or clover.verbose=true properties are set.
  * @param clover
  */
-private void toggleAntLogging(ConfigObject clover)
-{
-// get any BuildListeners and turn logging on
-  if (clover.debug)
-  {
-    ant.project.buildListeners.each {listener ->
-      if (listener instanceof BuildLogger)
-      {
-        listener.messageOutputLevel = Project.MSG_DEBUG
-      }
-    }
-    println "Clover ant task logging level set to DEBUG"
+private void toggleAntLogging(ConfigObject clover) {
+    // get any BuildListeners and turn logging on
+    if (clover.debug) {
+        ant.project.buildListeners.each {listener ->
+            if (listener instanceof BuildLogger) {
+                listener.messageOutputLevel = Project.MSG_DEBUG
+            }
+        }
+        println "Clover: Ant task logging level set to DEBUG"
 
-  } else if (clover.verbose) {
-    ant.project.buildListeners.each {listener ->
-      if (listener instanceof BuildLogger)
-      {
-        listener.messageOutputLevel = Project.MSG_VERBOSE
-      }
-    }
-    println "Clover ant task logging level set to VERBOSE"
+    } else if (clover.verbose) {
+        ant.project.buildListeners.each {listener ->
+            if (listener instanceof BuildLogger) {
+                listener.messageOutputLevel = Project.MSG_VERBOSE
+            }
+        }
+        println "Clover: Ant task logging level set to VERBOSE"
 
-  }
+    }
 }
 
 /**
  * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
  */
-private def ConfigObject mergeConfig()
-{
+private def ConfigObject mergeConfig() {
 
-  final Map argsMap = parseArguments()
-  final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
+    final Map argsMap = parseArguments()
+    final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
 
-  final ConfigSlurper slurper = new ConfigSlurper()
-  final Properties props = new Properties()
-  props.putAll(argsMap)
+    final ConfigSlurper slurper = new ConfigSlurper()
+    final Properties props = new Properties()
+    props.putAll(argsMap)
 
-  final ConfigObject argsMapConfig = slurper.parse(props)
-  config.merge(argsMapConfig.clover)
+    final ConfigObject argsMapConfig = slurper.parse(props)
+    config.merge(argsMapConfig.clover)
 
-  return config
+    return config
 
 }
 
@@ -475,40 +444,34 @@ private def ConfigObject mergeConfig()
 // and the argsMap is not populated in time for the testStart event.
 // see: http://jira.codehaus.org/browse/GRAILS-2663
 
-private Map parseArguments()
-{
-  // Only ever parse the arguments once. We also don't bother parsing
-  // the arguments if the "args" string is empty.
+private Map parseArguments() {
+    // Only ever parse the arguments once. We also don't bother parsing
+    // the arguments if the "args" string is empty.
 //    if (argsMap.size() > 1 || argsMap["params"] || !args) return
-  argsMap = [params: []]
+    argsMap = [params: []]
 
-  args?.tokenize().each {token ->
-    def nameValueSwitch = token =~ "--?(.*)=(.*)"
-    if (nameValueSwitch.matches())
-    { // this token is a name/value pair (ex: --foo=bar or -z=qux)
-      final def value = nameValueSwitch[0][2]
-      argsMap[nameValueSwitch[0][1]] = "false".equalsIgnoreCase(value) ? false : value;
+    args?.tokenize().each { token ->
+        def nameValueSwitch = token =~ "--?(.*)=(.*)"
+        if (nameValueSwitch.matches()) { // this token is a name/value pair (ex: --foo=bar or -z=qux)
+            final def value = nameValueSwitch[0][2]
+            argsMap[nameValueSwitch[0][1]] = "false".equalsIgnoreCase(value) ? false : value;
+        }
+        else {
+            def nameOnlySwitch = token =~ "--?(.*)"
+            if (nameOnlySwitch.matches()) {  // this token is just a switch (ex: -force or --help)
+                argsMap[nameOnlySwitch[0][1]] = true
+            }
+            else { // single item tokens, append in order to an array of params
+                argsMap["params"] << token
+            }
+        }
     }
-    else
-    {
-      def nameOnlySwitch = token =~ "--?(.*)"
-      if (nameOnlySwitch.matches())
-      {  // this token is just a switch (ex: -force or --help)
-        argsMap[nameOnlySwitch[0][1]] = true
-      }
-      else
-      { // single item tokens, append in order to an array of params
-        argsMap["params"] << token
-      }
-    }
-  }
 
-  if (argsMap.containsKey('non-interactive'))
-  {
-    println "Setting non-interactive mode"
-    isInteractive = !(argsMap.'non-interactive')
-  }
-  return argsMap
+    if (argsMap.containsKey('non-interactive')) {
+        println "Clover: Setting non-interactive mode"
+        isInteractive = !(argsMap.'non-interactive')
+    }
+    return argsMap
 }
 
 /**
@@ -516,10 +479,10 @@ private Map parseArguments()
  * because we need access to project configuration object as well as global variables from _Events.groovy.
  */
 eventPluginInstalled = { fullPluginName ->
-  if ( ((String)fullPluginName).startsWith("clover-")) {
-    println "Clover: Plugin was installed, loading new Ant task definitions ..."
-    // Call event callback internally in order to load clover task definitions,
-    // toggle on Clover, set global variables like source paths etc
-    eventSetClasspath(null)
-  }
+    if (((String) fullPluginName).startsWith("clover-")) {
+        println "Clover: Plugin was installed, loading new Ant task definitions ..."
+        // Call event callback internally in order to load clover task definitions,
+        // toggle on Clover, set global variables like source paths etc
+        eventSetClasspath(null)
+    }
 }
