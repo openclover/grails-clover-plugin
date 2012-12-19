@@ -8,11 +8,11 @@
     <!-- ========================================================================================= -->
 
     <!-- Enter a Clover-for-Grails version being tested. It will be downloaded from ~/.m2 cache    -->
-    <property name="grails.clover.version" value="3.1.8"/>
+    <property name="grails.clover.version" value="3.1.9"/>
 
     <!-- Enter a Clover Core version being used by Clover-for-Grails. It must be the same number
     as defined in <grails>/grails-app/conf/BuildConfig.groovy clover.core.version -->
-    <property name="clover.core.version" value="3.1.8"/>
+    <property name="clover.core.version" value="3.1.9-SNAPSHOT"/>
 
     <!-- Uncomment to have report launched in a web browser
     <property name="grails.clover.view" value="-clover.view"/> -->
@@ -191,9 +191,15 @@
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.0.3"/>
-            <param name="project.name" value="grails-website"/>
-            <param name="expected.coverage" value="88 classes, 1 206 / 3 515 elements"/>
-            <param name="expected.testresults" value="3 / 7 tests"/>
+            <param name="project.name" value="petclinic203"/>
+            <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
+            <param name="expected.testresults" value="9 / 9"/>
+        </antcall>
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="2.1.0"/>
+            <param name="project.name" value="petclinic210"/>
+            <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
+            <param name="expected.testresults" value="9 / 9"/>
         </antcall>
     </target>
 </project>
