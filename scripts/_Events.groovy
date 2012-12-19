@@ -3,12 +3,19 @@ import org.apache.tools.ant.Project
 
 import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 
-import com.cenqua.clover.tasks.AntInstrumentationConfig
-import com.atlassian.clover.api.optimization.Optimizable
-import com.atlassian.clover.api.optimization.OptimizationOptions
-import com.atlassian.clover.api.optimization.TestOptimizer
+// Note: the GRAILS-5755 fix has solved problem with loading dependencies only partially:
+//  - we don't have to load classes manually using 'classLoader.loadClass(name)' but
+//  - during plugin installation via 'grails install-plugin' clover.jar is still not available
+//     - note that after installation it is accessible
+//     - note that it's also available when installation is made via BuildConfig.groovy)
+// Workaround:
+//  - instead of 'import com.cenqua.clover.tasks.AntInstrumentationConfig + new AntInstrumentationConfig()' we use
+//    'com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance()'
+//  - FileOptimizable does not implement Optimizable interface and the "raw" method TestOptimizer.optimizeObjects() is used
 
-// some clover defaults
+
+/* SOME CLOVER DEFAULT VALUES */
+
 defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
 defCloverIncludes = ["**/*.groovy", "**/*.java"];
 defCloverExcludes = ["**/conf/**", "**/plugins/**"];
@@ -19,6 +26,8 @@ defCloverHistorical = true; // by default, we will generate a historical report.
 defCloverSnapshotFile = new File("${projectWorkDir}", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
 
 defStoredTestTargetPatterns = [];
+
+/* EVENT HANDLERS */
 
 eventCompileStart = {kind ->
     ConfigObject config = mergeConfig()
@@ -67,7 +76,7 @@ eventTestPhasesStart = {phase ->
 
 }
 
-class FileOptimizable implements Optimizable {
+class FileOptimizable /*implements com.atlassian.clover.api.optimization.Optimizable*/ {
 
     final File file;
     final File baseDir;
@@ -81,8 +90,9 @@ class FileOptimizable implements Optimizable {
         sourceFileToClassName(baseDir, file)
     }
 
-    public String getClassName() {
-        sourceFileToClassName(baseDir, file)
+    @Override
+    public String toString() {
+        return getName();
     }
 
     /**
@@ -117,15 +127,15 @@ eventTestCompileEnd = { type ->
     if (config.optimize) {
         println "Clover: Test source compilation phase ended"
 
-        def antInstrConfig = AntInstrumentationConfig.getFrom(ant.project)
-        def builder = OptimizationOptions.Builder.newInstance()
+        def antInstrConfig = com.cenqua.clover.tasks.AntInstrumentationConfig.getFrom(ant.project)
+        def builder = com.atlassian.clover.api.optimization.OptimizationOptions.Builder.newInstance()
         def options = builder.enabled(true).
                 debug(true).
                 initString(antInstrConfig.initString).
                 snapshot(defCloverSnapshotFile).build()
 
         println "Clover: Configuring test optimization with options " + options.toString()
-        def optimizer = TestOptimizer.newInstance(options)
+        def optimizer = com.atlassian.clover.api.optimization.TestOptimizer.newInstance(options)
 
         // convert the testTargetPatterns into a list of optimizables...
         List optimizables = new ArrayList()
@@ -134,17 +144,19 @@ eventTestCompileEnd = { type ->
         phasesToRun.each {phaseName ->
 
             List<File> files = new LinkedList<File>()
-            defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName)) }
+            defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName.toString())) }
 
             files.each { optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
 
+            println("Phase=" + phaseName)
+            println("Optimizables=" + optimizables.toListString())
         }
 
 
-        List optimizedTests = optimizer.optimize(optimizables)
+        List optimizedTests = optimizer.optimizeObjects(optimizables)
 
         final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
-        optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.className)) }
+        optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.toString())) }
 
         testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];
     }
@@ -279,9 +291,7 @@ def toggleCloverOn(ConfigObject clover) {
     ant.'clover-env'()
 
     // create an AntInstrumentationConfig object, and set this on the ant project
-    // def antInstrConfClass = loadDependencyClass('com.cenqua.clover.tasks.AntInstrumentationConfig')
-
-    def antConfig = AntInstrumentationConfig.newInstance(ant.project)
+    def antConfig = com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance(ant.project)
     configureAntInstr(clover, antConfig)
     antConfig.setIn ant.project
 
@@ -390,7 +400,7 @@ private def configureLicense(ConfigObject clover) {
                Clover: License is not configured. Please define clover.license.path=/path/to/clover.license
                in configuration in grails-app/conf/BuildConfig.groovy"""
     } else {
-        System.setProperty LICENSE_PROP, license
+        System.setProperty(LICENSE_PROP, license)
         println "Clover: Using Clover license path: ${System.getProperty LICENSE_PROP}"
     }
 }
