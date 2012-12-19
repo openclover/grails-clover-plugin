@@ -148,8 +148,9 @@ eventTestCompileEnd = { type ->
 
             files.each { optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
 
-            println("Phase=" + phaseName)
-            println("Optimizables=" + optimizables.toListString())
+            if (config.verbose) {
+                println("Clover: Tests to be optimized in ${phaseName} test phase: " + optimizables.toListString())
+            }
         }
 
 
@@ -158,6 +159,12 @@ eventTestCompileEnd = { type ->
         final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
         optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.toString())) }
 
+        println("Clover: Test Optimization selected " + optimizedTestTargetPatterns.size() + " out of " + optimizables.size() + " tests for execution")
+        if (config.verbose) {
+            println("Clover: Selected tests: " + optimizedTestTargetPatterns)
+        }
+
+        // Set variable read by _GrailsTest.groovy
         testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];
     }
 }
