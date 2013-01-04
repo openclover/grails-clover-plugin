@@ -10,7 +10,7 @@ import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 //     - note that it's also available when installation is made via BuildConfig.groovy)
 // Workaround:
 //  - instead of 'import com.cenqua.clover.tasks.AntInstrumentationConfig + new AntInstrumentationConfig()' we use
-//    'com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance()'
+//    'com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance()' (thanks to Groovy syntax it does not complain)
 //  - FileOptimizable does not implement Optimizable interface and the "raw" method TestOptimizer.optimizeObjects() is used
 
 
@@ -76,7 +76,8 @@ eventTestPhasesStart = {phase ->
 
 }
 
-class FileOptimizable /*implements com.atlassian.clover.api.optimization.Optimizable*/ {
+class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.optimization.Optimizable' due to
+        problem with dependency resolution during 'grails install-plugin' */ {
 
     final File file;
     final File baseDir;
@@ -157,7 +158,11 @@ eventTestCompileEnd = { type ->
         List optimizedTests = optimizer.optimizeObjects(optimizables)
 
         final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
-        optimizedTests.each { optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(it.toString())) }
+        optimizedTests.each {
+            // String className = it.getName()
+            final String className = (String)it.getClass().getMethod("getName").invoke(it)
+            optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(className))
+        }
 
         println("Clover: Test Optimization selected " + optimizedTestTargetPatterns.size() + " out of " + optimizables.size() + " tests for execution")
         if (config.verbose) {
