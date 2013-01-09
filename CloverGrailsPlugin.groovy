@@ -1,7 +1,7 @@
 class CloverGrailsPlugin
 {
   // the plugin version
-  def version = "3.1.9"
+  def version = "3.1.10"
   // the version or versions of Grails the plugin is designed for
   def grailsVersion = "1.3.* > *"
   // the other plugins this plugin depends on

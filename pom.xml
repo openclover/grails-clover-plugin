@@ -4,7 +4,7 @@
     <groupId>org.grails.plugins</groupId>
     <artifactId>clover</artifactId>
     <packaging>zip</packaging>
-    <version>3.1.9</version>
+    <version>3.1.10</version>
     <name>Clover Code Coverage for Grails</name>
     <description>\
         A plugin that integrates Clover into GRAILS projects.
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.cenqua.clover</groupId>
             <artifactId>clover</artifactId>
-            <version>3.1.9-SNAPSHOT</version>
+            <version>3.1.10</version>
             <type>jar</type>
         </dependency>
     </dependencies>-->
