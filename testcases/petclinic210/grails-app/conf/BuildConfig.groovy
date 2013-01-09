@@ -14,7 +14,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":clover:3.1.9"
+        compile ":clover:3.1.10"
         compile ":tomcat:$grailsVersion"
         compile ":hibernate:$grailsVersion"
     }

@@ -8,11 +8,11 @@
     <!-- ========================================================================================= -->
 
     <!-- Enter a Clover-for-Grails version being tested. It will be downloaded from ~/.m2 cache    -->
-    <property name="grails.clover.version" value="3.1.9"/>
+    <property name="grails.clover.version" value="3.1.10"/>
 
     <!-- Enter a Clover Core version being used by Clover-for-Grails. It must be the same number
     as defined in <grails>/grails-app/conf/BuildConfig.groovy clover.core.version -->
-    <property name="clover.core.version" value="3.1.9-SNAPSHOT"/>
+    <property name="clover.core.version" value="3.1.10"/>
 
     <!-- Uncomment to have report launched in a web browser
     <property name="grails.clover.view" value="-clover.view"/> -->
