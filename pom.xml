@@ -4,7 +4,7 @@
     <groupId>org.grails.plugins</groupId>
     <artifactId>clover</artifactId>
     <packaging>zip</packaging>
-    <version>3.1.10.1</version>
+    <version>3.1.11</version>
     <name>Clover Code Coverage for Grails</name>
     <description>\
         A plugin that integrates Clover into GRAILS projects.

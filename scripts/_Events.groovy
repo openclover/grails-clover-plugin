@@ -160,7 +160,7 @@ eventTestCompileEnd = { type ->
         final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
         optimizedTests.each {
             // String className = it.getName()
-            final String className = (String)it.toString() // it.getClass().getMethod("getName").invoke(it)
+            final String className = (String)it.getClass().getMethod("getName").invoke(it)
             optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(className))
         }
 
