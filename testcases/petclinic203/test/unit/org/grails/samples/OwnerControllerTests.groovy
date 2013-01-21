@@ -66,21 +66,20 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase
 
   void testFindOneResult()
   {
-    mockDomain(Owner, [new Owner(id: 10L, lastName: "flintstone")])
+    mockDomain(Owner, [new Owner(lastName: "flintstone")])
 
     def controller = newInstance()
     controller.request.method = 'POST'
     controller.params.lastName = 'flintstone'
     controller.find.call()
 
-
     assertEquals "show", redirectArgs.action
-    assertEquals 10L, redirectArgs.id
+    assertEquals 1L, redirectArgs.id
   }
 
   void testFindManyResults()
   {
-    mockDomain(Owner, [new Owner(id: 10L, lastName: "flintstone"), new Owner(id: 12L, lastName: "flintstone")])
+    mockDomain(Owner, [new Owner(lastName: "flintstone"), new Owner(lastName: "flintstone")])
 
     def controller = newInstance()
     controller.request.method = 'POST'
