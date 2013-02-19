@@ -17,6 +17,19 @@
         * Fully Cross Referenced HTML view of your source code
         * Much more: See http://atlassian.com/clover
     </description>
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+            <comments>
+                The Grails Clover plugin is licensed under the Apache 2.0 license. However, the Clover dependency
+                (com.cenqua.clover:clover) is commercial software. Clover is free for use for Open Source projects
+                and non-profit organisations. For more information on Clover's licensing and pricing, please see:
+                http://www.atlassian.com/software/clover/licensing.jsp
+            </comments>
+        </license>
+    </licenses>
     <url>http://grails.org/Clover+Plugin</url>
     <developers>
         <developer>
