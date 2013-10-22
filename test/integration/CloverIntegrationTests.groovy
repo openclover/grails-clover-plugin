@@ -2,7 +2,7 @@ import grails.test.AbstractCliTestCase
 
 /**
  */
-public class CloverIntegrationTests extends AbstractCliTestCase {
+class CloverIntegrationTests extends AbstractCliTestCase {
 
     void testToggleCloverOn() {
         File testProjectDir = new File("testcases/petclinic203")

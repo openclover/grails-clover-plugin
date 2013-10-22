@@ -1,10 +1,8 @@
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir	= "target/test-reports"
+grails.project.work.dir = "target"
 
 clover {
-    debug = false;
-    on = false;
+    debug = false
+    on = false
     core.version = "com.cenqua.clover:clover:3.2.0"
     license.path = "clover.license"
 }
@@ -29,5 +27,11 @@ grails.project.dependency.resolution = {
         build(clover.core.version)
         compile(clover.core.version)
         runtime(clover.core.version)
+    }
+
+    plugins {
+        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
+            export = false
+        }
     }
 }
