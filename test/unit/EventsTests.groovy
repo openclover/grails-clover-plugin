@@ -2,12 +2,12 @@ import org.codehaus.gant.GantBuilder
 import org.apache.tools.ant.DefaultLogger
 import org.apache.tools.ant.Project
 import com.atlassian.clover.api.optimization.StringOptimizable
-import com.cenqua.clover.test.optimization.Snapshot
-import com.cenqua.clover.CloverDatabase
-import com.cenqua.clover.context.ContextSet
-import com.cenqua.clover.CoverageDataSpec
-import com.cenqua.clover.util.FileUtils
-import com.cenqua.clover.tasks.AntInstrumentationConfig
+import com.atlassian.clover.optimization.Snapshot
+import com.atlassian.clover.CloverDatabase
+import com.atlassian.clover.context.ContextSet
+import com.atlassian.clover.CoverageDataSpec
+import com.atlassian.clover.util.FileUtils
+import com.atlassian.clover.ant.tasks.AntInstrumentationConfig
 import com.atlassian.clover.api.optimization.TestOptimizer
 import com.atlassian.clover.api.optimization.OptimizationOptions
 import org.apache.tools.ant.BuildEvent
@@ -65,7 +65,7 @@ public class EventsTests extends GroovyTestCase {
                 userHome: testRunTmpDir,
                 grailsWorkDir: testRunTmpDir,
                 projectTargetDir: testRunTmpDir,
-                cloverPluginDir: new File(".")
+                cloverGrails1PluginDir: new File(".")
         ]);
         GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy");
         script = shell.run("_Events.groovy", binding);
