@@ -31,7 +31,7 @@ Clover's reports include:
 * Fully Cross Referenced HTML view of your source code
 * Much more: See http://atlassian.com/clover
 
-Looking for plugin for Grails 1.x? See http://grails.org/plugins/clover-grails1 (org.grails.plugins:clover-grails1)
+Looking for plugin for Grails 1.x? See http://grails.org/plugins/clover
 '''
 
   // URL to the plugin's documentation

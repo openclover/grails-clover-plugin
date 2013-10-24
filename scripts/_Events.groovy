@@ -9,8 +9,8 @@ import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 //     - note that after installation it is accessible
 //     - note that it's also available when installation is made via BuildConfig.groovy)
 // Workaround:
-//  - instead of 'import com.cenqua.clover.tasks.AntInstrumentationConfig + new AntInstrumentationConfig()' we use
-//    'com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance()' (thanks to Groovy syntax it does not complain)
+//  - instead of 'import com.atlassian.clover.ant.tasks.AntInstrumentationConfig + new AntInstrumentationConfig()' we use
+//    'com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance()' (thanks to Groovy syntax it does not complain)
 //  - FileOptimizable does not implement Optimizable interface and the "raw" method TestOptimizer.optimizeObjects() is used
 
 
@@ -128,7 +128,7 @@ eventTestCompileEnd = { type ->
     if (config.optimize) {
         println "Clover: Test source compilation phase ended"
 
-        def antInstrConfig = com.cenqua.clover.tasks.AntInstrumentationConfig.getFrom(ant.project)
+        def antInstrConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.getFrom(ant.project)
         def builder = com.atlassian.clover.api.optimization.OptimizationOptions.Builder.newInstance()
         def options = builder.enabled(true).
                 debug(true).
@@ -292,7 +292,7 @@ public def launchReport(def reportLocation) {
 
         String openLoc = openFile.toURI().toString()
         println "Clover: About to launch broswer: ${openLoc}"
-        com.cenqua.clover.reporters.util.BrowserLaunch.openURL openLoc;
+        com.atlassian.clover.reporters.util.BrowserLaunch.openURL openLoc;
     }
 }
 
@@ -303,7 +303,7 @@ def toggleCloverOn(ConfigObject clover) {
     ant.'clover-env'()
 
     // create an AntInstrumentationConfig object, and set this on the ant project
-    def antConfig = com.cenqua.clover.tasks.AntInstrumentationConfig.newInstance(ant.project)
+    def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance(ant.project)
     configureAntInstr(clover, antConfig)
     antConfig.setIn ant.project
 
