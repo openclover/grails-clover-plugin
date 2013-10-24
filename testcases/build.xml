@@ -8,26 +8,32 @@
     <!-- ========================================================================================= -->
 
     <!-- Enter a Clover-for-Grails version being tested. It will be downloaded from ~/.m2 cache    -->
-    <property name="grails.clover.version" value="3.1.10"/>
+    <property name="grails.clover.version" value="3.2.0"/>
 
     <!-- Enter a Clover Core version being used by Clover-for-Grails. It must be the same number
     as defined in <grails>/grails-app/conf/BuildConfig.groovy clover.core.version -->
-    <property name="clover.core.version" value="3.1.10"/>
+    <property name="clover.core.version" value="3.2.0"/>
+
+    <!-- Location of the licese to be used for testing -->
+    <property name="clover.license.file" location="${user.home}/clover.license"/>
 
     <!-- Uncomment to have report launched in a web browser
     <property name="grails.clover.view" value="-clover.view"/> -->
     <property name="grails.clover.view" value=""/>
 
+    <property name="maven.repository.home" value="${user.home}/.m2/repository"/>
+
+    <!-- Directory containing grails-x.x.x.zip files -->
+    <property name="grails.dist.dir" value="${user.home}/.grails-dist"/>
+
     <!-- ========================================================================================= -->
 
     <!-- Import extra Ant tasks -->
-    <taskdef resource="net/sf/antcontrib/antlib.xml"
-             classpath="../../lib/ant-contrib-1.0b3.jar"/>
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="ant-contrib-1.0b3.jar"/>
 
     <!-- Location where we have Grails binaries archives to unpack -->
-    <property name="grails.dist.dir" value="../dist"/>
-    <property name="grails.plugin.file" location="${user.home}/.m2/repository/org/grails/plugins/clover/${grails.clover.version}/clover-${grails.clover.version}.zip"/>
-    <property name="clover.core.file" location="${user.home}/.m2/repository/com/cenqua/clover/clover/${clover.core.version}/clover-${clover.core.version}.jar"/>
+    <property name="grails.plugin.file" location="${maven.repository.home}/org/grails/plugins/clover/${grails.clover.version}/clover-${grails.clover.version}.zip"/>
+    <property name="clover.core.file" location="${maven.repository.home}/com/cenqua/clover/clover/${clover.core.version}/clover-${clover.core.version}.jar"/>
     <property environment="env"/>
 
     <target name="init">
@@ -66,10 +72,16 @@
         expected.testresults - Test Results box value - from dashboard in html report
     -->
     <target name="_test-testcase">
-        <echo message="TESTING PROJECT ${project.name}"/>
+        <echo message=""/>
+        <echo message="============================================================================"/>
+        <echo message="= TESTING PROJECT ${project.name}"/>
+        <echo message="============================================================================"/>
+        <echo message=""/>
 
         <property name="grails.temp.dir" value="${java.io.tmpdir}/grails-${grails.version}"/>
         <property name="m2.temp.dir" value="${grails.temp.dir}/.m2/repository"/>
+        <property name="ivy2.temp.dir" value="${grails.temp.dir}/.ivy2"/>
+        <property name="cache.temp.dir" value="${grails.temp.dir}/.grails"/>
 
         <!-- Unzip grails framework from archive to temp dir -->
         <echo message="Extracting grails distribution archive ..."/>
@@ -82,11 +94,11 @@
         <copy file="${clover.core.file}" todir="${m2.temp.dir}/com/cenqua/clover/clover/${clover.core.version}" overwrite="true"/>
 
         <!-- Copy license file from $HOME to temporary home -->
-        <copy file="../etc/clover-development.license" tofile="${grails.temp.dir}/clover.license"/>
+        <copy file="${clover.license.file}" tofile="${grails.temp.dir}/clover.license"/>
 
         <!-- Copy default groovy settings to temporary .grails dir -->
-        <mkdir dir="${grails.temp.dir}/.grails"/>
-        <copy file="settings.groovy" todir="${grails.temp.dir}/.grails"/>
+        <mkdir dir="${cache.temp.dir}"/>
+        <copy file="settings.groovy" todir="${cache.temp.dir}"/>
 
         <!-- Remove trash from previous build -->
         <delete dir="${basedir}/${project.name}/target"/>
@@ -106,14 +118,16 @@
                 <echo message="Executing:
                 set GRAILS_HOME=${grails.temp.dir}
                 cd ${basedir}/${project.name}
-                cmd /c ${grails.temp.dir}/bin/grails.bat -Dgrails.project.compile.verbose=true -Dgrails.project.work.dir=${grails.temp.dir}/.grails -Divy.default.ivy.user.dir=${grails.temp.dir}/.ivy2 -Duser.home=${grails.temp.dir} test-app -clover.on ${grails.clover.view}"/>
+                cmd /c ${grails.temp.dir}/bin/grails.bat -Dgrails.project.compile.verbose=true -Dgrails.project.work.dir=${cache.temp.dir} -Divy.default.ivy.user.dir=${ivy2.temp.dir} -Duser.home=${grails.temp.dir} test-app -clover.on ${grails.clover.view}"/>
                 <exec executable="cmd" dir="${basedir}/${project.name}" failonerror="false">
                     <arg value="/c"/>
                     <arg value="${grails.temp.dir}/bin/grails.bat"/>
                     <arg value="-Dgrails.project.compile.verbose=true"/>
-                    <arg value="-Dgrails.project.work.dir=${grails.temp.dir}/.grails"/> <!-- Grails' project cache -->
-                    <arg value="-Divy.default.ivy.user.dir=${grails.temp.dir}/.ivy2"/>  <!-- Grails' .ivy2 local repo cache -->
+                    <arg value="-Dgrails.project.work.dir=${cache.temp.dir}"/> <!-- Grails' project cache -->
+                    <arg value="-Divy.default.ivy.user.dir=${ivy2.temp.dir}"/>  <!-- Grails' .ivy2 local repo cache -->
                     <arg value="-Duser.home=${grails.temp.dir}"/>                       <!-- HOME for .m2 repo location-->
+                    <arg value="-Duser.language=en"/> <!-- setting language/country to have stable number format in tests -->
+                    <arg value="-Duser.country=US"/>
                     <arg value="test-app"/>
                     <arg value="-clover.on"/>
                     <arg value="${grails.clover.view}"/>
@@ -126,9 +140,11 @@
                 <!-- On Linux/MacOS we call 'grails' command directly -->
                 <exec executable="${grails.temp.dir}/bin/grails" dir="${basedir}/${project.name}" failonerror="false">
                     <arg value="-Dgrails.project.compile.verbose=true"/>
-                    <arg value="-Dgrails.project.work.dir=${grails.temp.dir}/.grails"/> <!-- Grails' project cache -->
-                    <arg value="-Divy.default.ivy.user.dir=${grails.temp.dir}/.ivy2"/>  <!-- Grails' .ivy2 local repo cache -->
+                    <arg value="-Dgrails.project.work.dir=${cache.temp.dir}/"/> <!-- Grails' project cache -->
+                    <arg value="-Divy.default.ivy.user.dir=${ivy2.temp.dir}"/>  <!-- Grails' .ivy2 local repo cache -->
                     <arg value="-Duser.home=${grails.temp.dir}"/>                       <!-- HOME for .m2 repo location-->
+                    <arg value="-Duser.language=en"/> <!-- setting language/country to have stable number format in tests -->
+                    <arg value="-Duser.country=US"/>
                     <arg value="test-app"/>
                     <arg value="-clover.on"/>
                     <arg value="${grails.clover.view}"/>
@@ -139,13 +155,18 @@
             </else>
         </if>
 
-        <!-- TODO add automatic testing of coverage value
-        expected.coverage - Coverage box value - from dashboard in html report
-        expected.testresults - Test Results box value - from dashboard in html report
-        parse ${basedir}/${project.name}/target/clover/report/dashboard.html
-        <label ...>Coverage</label><span> [61 classes, 1 888 / 4 603 elements]
-        <label ...>Test Results</label>...<span> <span class="">[58 / 58]</span> tests
-        -->
+        <echo message="Verifying code coverage and test results ..."/>
+        <property name="dashboard.html" location="${basedir}/${project.name}/target/clover/report/dashboard.html"/>
+        <condition property="coverage-ok">
+            <resourcecontains resource="${dashboard.html}" substring="${expected.coverage}"/>
+        </condition>
+        <fail message="Code coverage is not as expected [${expected.coverage}]" unless="coverage-ok"/>
+        <condition property="tests-ok">
+            <resourcecontains resource="${dashboard.html}" substring="${expected.testresults}"/>
+        </condition>
+        <fail message="Test results are not as expected [${expected.testresults}]" unless="tests-ok"/>
+        <echo message="Code coverage and test results are OK"/>
+       
         <delete dir="${grails.temp.dir}"/>
     </target>
 
@@ -172,34 +193,22 @@
 
     <target name="test" depends="init">
         <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.0"/>
-            <param name="project.name" value="petclinic"/>
-            <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
-            <param name="expected.testresults" value="9 / 9"/>
-        </antcall>
-        <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.8"/>
-            <param name="project.name" value="weceem"/>
-            <param name="expected.coverage" value="61 classes, 1 888 / 4 603 elements"/>
-            <param name="expected.testresults" value="58 / 58"/>
-        </antcall>
-        <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.8"/>
-            <param name="project.name" value="daily-groove"/>
-            <param name="expected.coverage" value="6 classes, 22 / 95 elements"/>
-            <param name="expected.testresults" value="5 / 5 tests"/>
-        </antcall>
-        <antcall target="_test-testcase">
             <param name="grails.version" value="2.0.3"/>
             <param name="project.name" value="petclinic203"/>
             <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
-            <param name="expected.testresults" value="9 / 9"/>
+            <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.1.0"/>
             <param name="project.name" value="petclinic210"/>
             <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
-            <param name="expected.testresults" value="9 / 9"/>
+            <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
+        </antcall>
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="2.2.1"/>
+            <param name="project.name" value="petclinic221"/>
+            <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
+            <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
         </antcall>
     </target>
 </project>
