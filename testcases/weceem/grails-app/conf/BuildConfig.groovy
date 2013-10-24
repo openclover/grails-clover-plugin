@@ -34,7 +34,7 @@ clover.reports.dir = "target/clover/report"
 
 clover {
 
-  license.path="../../etc/clover-development.license"
+  license.path="$userHome/clover.license"
   srcDirs = ["grails-app", "src", "test"]
 
   // example Custom Clover Report configuration:
