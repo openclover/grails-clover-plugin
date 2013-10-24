@@ -2,9 +2,10 @@
          xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.grails.plugins</groupId>
-    <artifactId>clover-grails1</artifactId>
+    <artifactId>clover</artifactId>
     <packaging>zip</packaging>
-    <version>3.2.0</version>
+    <!-- Use version range 3.1.13-3.1.99 for Clover for Grails 1.x. The 3.2.0+ is for Clover for Grails 2.x -->
+    <version>3.1.13</version>
     <name>Clover Code Coverage for Grails 1.x</name>
     <description>\
         A plugin that integrates Clover into GRAILS 1.x projects.
@@ -32,7 +33,7 @@
             </comments>
         </license>
     </licenses>
-    <url>http://grails.org/plugins/clover-grails1</url>
+    <url>http://grails.org/plugins/clover</url>
     <developers>
         <developer>
             <name>Atlassian</name>

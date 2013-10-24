@@ -401,7 +401,7 @@ private def configureLicense(ConfigObject clover) {
     }
 
     // check for a bundled eval clover license
-    def cloverPluginDir = binding.variables["cloverGrails1PluginDir"]
+    def cloverPluginDir = binding.variables["cloverPluginDir"]
     final File evalLicense = new File(cloverPluginDir, "grails-app/conf/clover/clover-evaluation.license")
     if (!license && evalLicense.exists()) {
         license = evalLicense.getAbsolutePath()
