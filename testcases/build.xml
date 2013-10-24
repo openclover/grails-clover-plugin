@@ -164,7 +164,7 @@
         <condition property="tests-ok">
             <resourcecontains resource="${dashboard.html}" substring="${expected.testresults}"/>
         </condition>
-        <fail message="Test results are not as expected [${expected.results}]" unless="tests-ok"/>
+        <fail message="Test results are not as expected [${expected.testresults}]" unless="tests-ok"/>
         <echo message="Code coverage and test results are OK"/>
        
         <delete dir="${grails.temp.dir}"/>
