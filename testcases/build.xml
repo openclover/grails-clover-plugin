@@ -8,7 +8,7 @@
     <!-- ========================================================================================= -->
 
     <!-- Enter a Clover-for-Grails version being tested. It will be downloaded from ~/.m2 cache    -->
-    <property name="grails.clover.version" value="3.2.0"/>
+    <property name="grails.clover.version" value="3.1.13"/>
 
     <!-- Enter a Clover Core version being used by Clover-for-Grails. It must be the same number
     as defined in <grails>/grails-app/conf/BuildConfig.groovy clover.core.version -->
@@ -32,7 +32,7 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="ant-contrib-1.0b3.jar"/>
 
     <!-- Location where we have Grails binaries archives to unpack -->
-    <property name="grails.plugin.file" location="${maven.repository.home}/org/grails/plugins/clover-grails1/${grails.clover.version}/clover-grails1-${grails.clover.version}.zip"/>
+    <property name="grails.plugin.file" location="${maven.repository.home}/org/grails/plugins/clover/${grails.clover.version}/clover-${grails.clover.version}.zip"/>
     <property name="clover.core.file" location="${maven.repository.home}/com/cenqua/clover/clover/${clover.core.version}/clover-${clover.core.version}.jar"/>
     <property environment="env"/>
 
@@ -89,7 +89,7 @@
         <unzip src="${grails.dist.dir}/grails-${grails.version}.zip" dest="${java.io.tmpdir}"/>
 
         <!-- Copy grails plugin from $HOME/.m2 repo to our temporary .m2 repo -->
-        <copy file="${grails.plugin.file}" todir="${m2.temp.dir}/org/grails/plugins/clover-grails1/${grails.clover.version}" overwrite="true"/>
+        <copy file="${grails.plugin.file}" todir="${m2.temp.dir}/org/grails/plugins/clover/${grails.clover.version}" overwrite="true"/>
         <!-- Copy clover core jar from $HOME/.m2 repo to our temporary .m2 repo -->
         <copy file="${clover.core.file}" todir="${m2.temp.dir}/com/cenqua/clover/clover/${clover.core.version}" overwrite="true"/>
 
