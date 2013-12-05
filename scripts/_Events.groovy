@@ -72,7 +72,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 eventTestPhasesStart = {phase ->
 
 //  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
-    defStoredTestTargetPatterns = testTargetPatterns;
+    defStoredTestTargetPatterns = testNames.collect { String it -> new GrailsTestTargetPattern(it) } as GrailsTestTargetPattern[]
 
 }
 
