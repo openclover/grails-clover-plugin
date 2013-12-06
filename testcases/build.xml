@@ -201,8 +201,8 @@
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.1.5"/>
             <param name="project.name" value="petclinic-grails21x"/>
-            <param name="expected.coverage" value="12 classes, 54 / 112 elements"/>
-            <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
+            <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
+            <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.2.4"/>

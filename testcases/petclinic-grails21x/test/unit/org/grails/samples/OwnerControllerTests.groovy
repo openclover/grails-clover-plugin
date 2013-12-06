@@ -1,12 +1,16 @@
 package org.grails.samples
 
-class OwnerControllerTests extends grails.test.ControllerUnitTestCase
+import grails.test.mixin.TestFor
+import grails.test.mixin.TestMixin
+import grails.test.mixin.domain.DomainClassUnitTestMixin
+
+@TestFor(OwnerController)
+@TestMixin(DomainClassUnitTestMixin)
+class OwnerControllerTests
 {
 
   void testAddGET()
   {
-    def controller = newInstance()
-
     controller.request.method = 'GET'
     def model = controller.add()
 
@@ -28,19 +32,17 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase
 
   void testAddInvalidOwner()
   {
-    def controller = newInstance()
     mockDomain(Owner)
     controller.request.method = 'POST'
 
     controller.add()
 
-    assertEquals "add", renderArgs.view
-    assertNotNull renderArgs.model.ownerBean
+    assertEquals "/owner/add", view
+    assertNotNull model.ownerBean
   }
 
   void testValidOwner()
   {
-    def controller = newInstance()
     mockDomain(Owner)
 
     controller.params.owner = [firstName: 'fred',
@@ -51,12 +53,11 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase
 
     controller.add()
 
-    assertEquals "show", redirectArgs.action
+    assertEquals "/owner/show/1", response.redirectedUrl
   }
 
   void testFindNoResults()
   {
-    def controller = newInstance()
     mockDomain(Owner)
     controller.request.method = 'POST'
 
@@ -68,29 +69,25 @@ class OwnerControllerTests extends grails.test.ControllerUnitTestCase
   {
     mockDomain(Owner, [new Owner(lastName: "flintstone")])
 
-    def controller = newInstance()
     controller.request.method = 'POST'
     controller.params.lastName = 'flintstone'
     controller.find.call()
 
-
-    assertEquals "show", redirectArgs.action
-    assertEquals 1L, redirectArgs.id
+    assertEquals "show/1", response.redirectedUrl
   }
 
   void testFindManyResults()
   {
     mockDomain(Owner, [new Owner(lastName: "flintstone"), new Owner(lastName: "flintstone")])
 
-    def controller = newInstance()
     controller.request.method = 'POST'
     controller.params.lastName = 'flintstone'
     controller.find.call()
 
-
-    assertEquals "selection", renderArgs.view
-    assertNotNull renderArgs.model.owners
-    assertEquals 2, renderArgs.model.owners.size()
+    assertEquals "selection", response.redirectedUrl
+    assertEquals "selection", view
+    assertNotNull model.owners
+    assertEquals 2, model.owners.size()
   }
 
 }
