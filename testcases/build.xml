@@ -193,20 +193,26 @@
 
     <target name="test" depends="init">
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.0.3"/>
-            <param name="project.name" value="petclinic203"/>
+            <param name="grails.version" value="2.0.4"/>
+            <param name="project.name" value="petclinic-grails20x"/>
             <param name="expected.coverage" value="18 classes, 106 / 204 elements"/>
             <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.1.0"/>
-            <param name="project.name" value="petclinic210"/>
+            <param name="grails.version" value="2.1.5"/>
+            <param name="project.name" value="petclinic-grails21x"/>
             <param name="expected.coverage" value="12 classes, 54 / 112 elements"/>
             <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.2.1"/>
-            <param name="project.name" value="petclinic221"/>
+            <param name="grails.version" value="2.2.4"/>
+            <param name="project.name" value="petclinic-grails22x"/>
+            <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
+            <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
+        </antcall>
+        <antcall target="_test-testcase">
+            <param name="grails.version" value="2.3.4"/>
+            <param name="project.name" value="petclinic-grails23x"/>
             <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
