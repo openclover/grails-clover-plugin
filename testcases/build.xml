@@ -129,6 +129,7 @@
                     <arg value="-Duser.language=en"/> <!-- setting language/country to have stable number format in tests -->
                     <arg value="-Duser.country=US"/>
                     <arg value="test-app"/>
+                    <arg value="${test.pattern}"/>
                     <arg value="-clover.on"/>
                     <arg value="${grails.clover.view}"/>
                     <arg value="${grails2.args}"/>
@@ -146,6 +147,7 @@
                     <arg value="-Duser.language=en"/> <!-- setting language/country to have stable number format in tests -->
                     <arg value="-Duser.country=US"/>
                     <arg value="test-app"/>
+                    <arg value="${test.pattern}"/>
                     <arg value="-clover.on"/>
                     <arg value="${grails.clover.view}"/>
                     <arg value="${grails2.args}"/>
@@ -195,24 +197,28 @@
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.0.4"/>
             <param name="project.name" value="petclinic-grails20x"/>
+            <param name="test.pattern" value=""/>
             <param name="expected.coverage" value="18 classes, 106 / 204 elements"/>
             <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.1.5"/>
             <param name="project.name" value="petclinic-grails21x"/>
+            <param name="test.pattern" value=""/>
             <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.2.4"/>
             <param name="project.name" value="petclinic-grails22x"/>
+            <param name="test.pattern" value=""/>
             <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.3.5"/>
             <param name="project.name" value="petclinic-grails23x"/>
+            <param name="test.pattern" value="org.grails.samples.**"/>
             <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
