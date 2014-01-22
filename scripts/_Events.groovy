@@ -1,3 +1,4 @@
+import org.apache.tools.ant.BuildEvent
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
@@ -119,6 +120,35 @@ class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.opt
         return relativePath
     }
 
+}
+
+eventTestCompileStart = { type ->
+    // extract grover.jar and add it to the testClasspath - since grails 2.3 an integration test is being
+    // compiled by GrailsIntegrationTestCompiler (extends Grailsc) called internally from the GrailsProjectTestCompiler
+    // we have to ensure that the Grover transformer will be picked up by groovyc
+    File groverJar = com.atlassian.clover.ant.groovy.GroovycSupport.extractGroverJar(null, true)
+    projectCompiler.buildSettings.testDependencies += groverJar
+
+    // create 'instrumentation.ser' file and add it's parent directory to the classpath; Grover will pick it up
+//    def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance(ant.project)
+//    File groverConfigSer = com.atlassian.clover.ant.groovy.GroovycSupport.newConfigDir(
+//            antConfig,
+//            com.atlassian.clover.util.FileUtils.createTempDir("grover", antConfig.getTmpDir())
+//    )
+//    projectCompiler.buildSettings.testDependencies += groverConfigSer
+
+    // re-initialize class paths
+    projectCompiler.initializeAntClasspaths()
+
+    // XXX another approach:
+    // create an AntInstrumentationConfig object, and set this on the test project
+    ConfigObject grailsCloverConfig = mergeConfig()
+    def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance(projectTestRunner.projectTestCompiler.ant.project)
+    configureAntInstr(grailsCloverConfig, antConfig)
+    // store configuration as a project reference
+    antConfig.setIn projectTestRunner.projectTestCompiler.ant.project
+    // add GroovycSupport's build listener to this project
+    com.atlassian.clover.ant.groovy.GroovycSupport.ensureAddedTo(projectTestRunner.projectTestCompiler.ant.project)
 }
 
 eventTestCompileEnd = { type ->
