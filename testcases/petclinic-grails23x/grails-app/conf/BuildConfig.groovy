@@ -27,4 +27,5 @@ grails.project.dependency.resolution = {
 
 clover {
   license.path="$userHome/clover.license"
+  instrumentLambda = "block"
 }
