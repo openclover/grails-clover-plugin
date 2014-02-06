@@ -20,7 +20,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         build ":bean-fields:0.4"
-        build ":clover:3.2.0"
+        build ":clover:3.2.2"
         build ":fckeditor:0.9.4"
         build ":navigation:1.1.1"
         build ":quartz:0.4.1"
