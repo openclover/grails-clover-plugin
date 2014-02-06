@@ -72,7 +72,7 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 eventTestPhasesStart = {phase ->
 
 //  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
-    defStoredTestTargetPatterns = testTargetPatterns;
+    defStoredTestTargetPatterns = testNames.collect { String it -> new GrailsTestTargetPattern(it) } as GrailsTestTargetPattern[]
 
 }
 
@@ -119,6 +119,21 @@ class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.opt
         return relativePath
     }
 
+}
+
+eventTestCompileStart = { type ->
+    ConfigObject config = mergeConfig()
+    if (config.optimize || config.on) {
+        // GrailsProjectTestRunner has been introduced in grails 2.3
+        if (hasVariable('projectTestRunner')) {
+            // copy config from the current project to the testRunner's internal one
+            def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.getFrom ant.project
+            antConfig.setIn projectTestRunner.projectTestCompiler.ant.project
+
+            // add GroovycSupport's build listener to this project, it will reconfigure groovyc tasks (since grails 2.3)
+            com.atlassian.clover.ant.groovy.GroovycSupport.ensureAddedTo(projectTestRunner.projectTestCompiler.ant.project)
+        }
+    }
 }
 
 eventTestCompileEnd = { type ->

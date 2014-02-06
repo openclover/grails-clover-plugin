@@ -4,11 +4,10 @@
     <groupId>org.grails.plugins</groupId>
     <artifactId>clover</artifactId>
     <packaging>zip</packaging>
-    <!-- Use version range 3.1.13-3.1.99 for Clover for Grails 1.x. The 3.2.0+ is for Clover for Grails 2.x -->
-    <version>3.1.13</version>
-    <name>Clover Code Coverage for Grails 1.x</name>
+    <version>3.2.2</version>
+    <name>Clover Code Coverage for Grails</name>
     <description>\
-        A plugin that integrates Clover into GRAILS 1.x projects.
+        A plugin that integrates Clover into GRAILS projects.
         Clover is a Code Coverage tool that produces beautiful reports which are highly configurable and extensible.
         Clover not only reports which lines of code were executed during a test run, it also reports which tests hit
         which lines of code.
@@ -18,7 +17,6 @@
         * Fully Cross Referenced HTML view of your source code
         * Much more: See http://atlassian.com/clover
 
-        See also: Clover Plugin for Grails 2.x (org.grails.plugins:clover)
     </description>
     <licenses>
         <license>
@@ -58,8 +56,8 @@
         <dependency>
             <groupId>com.cenqua.clover</groupId>
             <artifactId>clover</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.2</version>
             <type>jar</type>
         </dependency>
-    </dependencies>-->
+    </dependencies>
 </project>
