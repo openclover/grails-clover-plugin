@@ -29,9 +29,4 @@ grails.project.dependency.resolution = {
         runtime(clover.core.version)
     }
 
-    plugins {
-        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
-            export = false
-        }
-    }
 }

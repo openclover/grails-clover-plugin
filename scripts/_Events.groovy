@@ -121,14 +121,19 @@ class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.opt
 eventTestCompileStart = { type ->
     ConfigObject config = mergeConfig()
     if (config.optimize || config.on) {
-        // GrailsProjectTestRunner has been introduced in grails 2.3
-        if (hasVariable('projectTestRunner')) {
+        // GrailsProjectTestRunner has been introduced in grails 2.3 so let's check if we've got it here
+        // using getVariable() instead of hasVariable() because the latter is not available in grails 1.3
+        try {
+            getVariable('projectTestRunner')
+
             // copy config from the current project to the testRunner's internal one
-            def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.getFrom ant.project
-            antConfig.setIn projectTestRunner.projectTestCompiler.ant.project
+            def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.getFrom(ant.project)
+            antConfig.setIn(projectTestRunner.projectTestCompiler.ant.project)
 
             // add GroovycSupport's build listener to this project, it will reconfigure groovyc tasks (since grails 2.3)
             com.atlassian.clover.ant.groovy.GroovycSupport.ensureAddedTo(projectTestRunner.projectTestCompiler.ant.project)
+        } catch (MissingPropertyException ex) {
+            // ignore
         }
     }
 }
@@ -317,7 +322,7 @@ def toggleCloverOn(ConfigObject clover) {
     // create an AntInstrumentationConfig object, and set this on the ant project
     def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance(ant.project)
     configureAntInstr(clover, antConfig)
-    antConfig.setIn ant.project
+    antConfig.setIn(ant.project)
 
     if (clover.setuptask) {
         println "Clover: using custom clover-setup configuration."
