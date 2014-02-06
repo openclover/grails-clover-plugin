@@ -16,7 +16,6 @@
         * A TreeMap to visualise the most complex, uncovered areas of your project
         * Fully Cross Referenced HTML view of your source code
         * Much more: See http://atlassian.com/clover
-
     </description>
     <licenses>
         <license>
@@ -59,5 +58,5 @@
             <version>3.2.2</version>
             <type>jar</type>
         </dependency>
-    </dependencies>
+    </dependencies>-->
 </project>

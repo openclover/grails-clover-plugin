@@ -30,7 +30,6 @@ Clover's reports include:
 * A TreeMap to visualise the most complex, uncovered areas of your project
 * Fully Cross Referenced HTML view of your source code
 * Much more: See http://atlassian.com/clover
-
 '''
 
   // URL to the plugin's documentation
