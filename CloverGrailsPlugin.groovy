@@ -1,14 +1,8 @@
 class CloverGrailsPlugin
 {
-  // the plugin version
   def version = "3.2.2"
-  // the version or versions of Grails the plugin is designed for
   def grailsVersion = "1.3.* > *"
-  // the other plugins this plugin depends on
-  def dependsOn = [:]
-  // resources that are excluded from plugin packaging
   def pluginExcludes = [
-          "grails-app/views/error.gsp",
           "samples",
           "test",
           "etc/clover.license",
@@ -21,7 +15,7 @@ class CloverGrailsPlugin
   def author = "Atlassian"
   def authorEmail = "support@atlassian.com"
   def title = "Clover Code Coverage for Grails"
-  def description = '''\\
+  def description = '''\
 A plugin that integrates Clover into GRAILS projects.
 Clover is a Code Coverage tool that produces beautiful reports which are highly configurable and extensible.
 Clover not only reports which lines of code were executed during a test run, it also reports which tests hit which lines of code.
@@ -34,27 +28,4 @@ Clover's reports include:
 
   // URL to the plugin's documentation
   def documentation = "http://grails.org/plugins/clover"
-
-  def doWithSpring = {
-
-  }
-
-  def doWithApplicationContext = { applicationContext ->
-
-  }
-
-  def doWithWebDescriptor = { xml ->
-
-  }
-
-  def doWithDynamicMethods = { ctx ->
-
-  }
-
-  def onChange = { event ->
-  }
-
-  def onConfigChange = { event ->
-
-  }
 }

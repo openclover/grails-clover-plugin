@@ -16,16 +16,16 @@ import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 
 /* SOME CLOVER DEFAULT VALUES */
 
-defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"];
-defCloverIncludes = ["**/*.groovy", "**/*.java"];
-defCloverExcludes = ["**/conf/**", "**/plugins/**"];
+defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"]
+defCloverIncludes = ["**/*.groovy", "**/*.java"]
+defCloverExcludes = ["**/conf/**", "**/plugins/**"]
 defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
 defCloverHistoryDir = "${basedir}/.cloverhistory"
 defCloverReportTitle = metadata["app.name"]
-defCloverHistorical = true; // by default, we will generate a historical report.
-defCloverSnapshotFile = new File("${projectWorkDir}", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
+defCloverHistorical = true // by default, we will generate a historical report.
+defCloverSnapshotFile = new File("$projectWorkDir", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
 
-defStoredTestTargetPatterns = [];
+defStoredTestTargetPatterns = []
 
 /* EVENT HANDLERS */
 
@@ -73,27 +73,26 @@ eventTestPhasesStart = {phase ->
 
 //  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
     defStoredTestTargetPatterns = testNames.collect { String it -> new GrailsTestTargetPattern(it) } as GrailsTestTargetPattern[]
-
 }
 
 class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.optimization.Optimizable' due to
         problem with dependency resolution during 'grails install-plugin' */ {
 
-    final File file;
-    final File baseDir;
+    final File file
+    final File baseDir
 
-    public FileOptimizable(file, baseDir) {
-        this.file = file;
-        this.baseDir = baseDir;
+    FileOptimizable(file, baseDir) {
+        this.file = file
+        this.baseDir = baseDir
     }
 
-    public String getName() {
+    String getName() {
         sourceFileToClassName(baseDir, file)
     }
 
     @Override
-    public String toString() {
-        return getName();
+    String toString() {
+        return getName()
     }
 
     /**
@@ -115,10 +114,8 @@ class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.opt
             throw new IllegalArgumentException("File path (${filePath}) is not descendent of base path (${basePath}).")
         }
 
-        def relativePath = filePath.substring(basePath.size() + 1)
-        return relativePath
+        return filePath.substring(basePath.size() + 1)
     }
-
 }
 
 eventTestCompileStart = { type ->
@@ -162,7 +159,7 @@ eventTestCompileEnd = { type ->
             List<File> files = new LinkedList<File>()
             defStoredTestTargetPatterns.each { files.addAll(scanForSourceFiles(it, binding, phaseName.toString())) }
 
-            files.each { optimizables << new FileOptimizable(it, new File("test/${phaseName}")) }
+            files.each { optimizables << new FileOptimizable(it, new File("test", phaseName)) }
 
             if (config.verbose) {
                 println("Clover: Tests to be optimized in ${phaseName} test phase: " + optimizables.toListString())
@@ -185,12 +182,12 @@ eventTestCompileEnd = { type ->
         }
 
         // Set variable read by _GrailsTest.groovy
-        testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[];
+        testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[]
     }
 }
 
 private String createTestPattern(String name) {
-    return name.endsWith("Tests") ? name.substring(0, name.lastIndexOf("Tests")) : name;
+    return name.endsWith("Tests") ? name.substring(0, name.lastIndexOf("Tests")) : name
 }
 
 private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Binding binding, String phaseName) {
@@ -198,7 +195,7 @@ private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Bin
     def resolveResources = binding['resolveResources']
     def testSuffixes = ['']
     def testExtensions = ["java", "groovy"]
-    def sourceDir = new File("test/${phaseName}")
+    def sourceDir = new File("test", phaseName)
 
     testSuffixes.each { suffix ->
         testExtensions.each { extension ->
@@ -213,7 +210,7 @@ private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Bin
 eventTestPhasesEnd = {
     ConfigObject config = mergeConfig()
     if (!config.on && !config.optimize) {
-        return;
+        return
     }
 
     println "Clover: Tests ended. Generating reports"
@@ -294,11 +291,11 @@ eventTestPhasesEnd = {
  * @param reportLocation the directory containing the report to launch
  * @return
  */
-public def launchReport(def reportLocation) {
+def launchReport(reportLocation) {
     File openFile = new File(reportLocation, "index.html")
     if (openFile.exists()) {
         // if there is a wildcard in the testname, we can't do anything...
-        if (testNames.size() > 0) {
+        if (testNames) {
             String testName = testNames[0].replace((char) '.', File.separatorChar)
             String suffix = testName.toString().endsWith("Tests") ? "" : "Tests"
             File testFile = new File(reportLocation, testName + suffix + ".html")
@@ -307,7 +304,7 @@ public def launchReport(def reportLocation) {
 
         String openLoc = openFile.toURI().toString()
         println "Clover: About to launch broswer: ${openLoc}"
-        com.atlassian.clover.reporters.util.BrowserLaunch.openURL openLoc;
+        com.atlassian.clover.reporters.util.BrowserLaunch.openURL openLoc
     }
 }
 
@@ -354,7 +351,7 @@ def toggleCloverOn(ConfigObject clover) {
     }
 
     if (clover.snapshotLocation) {
-        defCloverSnapshotFile = new File(clover.snapshotLocation);
+        defCloverSnapshotFile = new File(clover.snapshotLocation)
     }
 
 }
@@ -363,7 +360,7 @@ def toggleCloverOn(ConfigObject clover) {
  * Populates an AntInstrumentationConfig instance with any matching properties in the ConfigObject.
  * Currently only primitive boolean, int and long are supported. As are String.
  */
-private def configureAntInstr(ConfigObject clover, def antConfig) {
+private configureAntInstr(ConfigObject clover, antConfig) {
 
     return clover.each {
 
@@ -372,20 +369,20 @@ private def configureAntInstr(ConfigObject clover, def antConfig) {
             String setter = MetaProperty.getSetterName(it.key)
             MetaProperty property = antConfig.metaClass.getMetaProperty(it.key.toString())
 
-            final def val;
+            final val
             switch (property.type) {
-                case Integer.class.getPrimitiveClass("int"):
+                case Integer.getPrimitiveClass("int"):
                     val = it.value.toInteger()
-                    break;
-                case Long.class.getPrimitiveClass("long"):
+                    break
+                case Long.getPrimitiveClass("long"):
                     val = it.value.toLong()
-                    break;
-                case Boolean.class.getPrimitiveClass("boolean"):
+                    break
+                case Boolean.getPrimitiveClass("boolean"):
                     val = (it.value == null || Boolean.parseBoolean(it.value.toString()))
-                    break;
-                case File.class:
+                    break
+                case File:
                     val = new File(it.value.toString())
-                    break;
+                    break
                 default:
                     val = it.value
             }
@@ -395,22 +392,22 @@ private def configureAntInstr(ConfigObject clover, def antConfig) {
     }
 }
 
-private def configureLicense(ConfigObject clover) {
+private configureLicense(ConfigObject clover) {
 // the directories to search for a clover.license file
     final String[] licenseSearchPaths = ["${userHome}", "${basedir}", "${basedir}/etc", "${grailsWorkDir}"]
 
     // the name of the system property that holds the clover license file
     final LICENSE_PROP = 'clover.license.path'
 
-    final license;
+    final license
     if (clover.license.path) {
         license = clover.license.path
     } else {
         licenseSearchPaths.each {
             final String licensePath = "${it}/clover.license"
             if (new File(licensePath).exists()) {
-                license = licensePath;
-                return;
+                license = licensePath
+                return
             }
         }
     }
@@ -454,14 +451,13 @@ private void toggleAntLogging(ConfigObject clover) {
             }
         }
         println "Clover: Ant task logging level set to VERBOSE"
-
     }
 }
 
 /**
  * Takes any CLI arguments and merges them with any configuration defined in BuildConfig.groovy in the clover block.
  */
-private def ConfigObject mergeConfig() {
+private ConfigObject mergeConfig() {
 
     final Map argsMap = parseArguments()
     final ConfigObject config = buildConfig.clover == null ? new ConfigObject() : buildConfig.clover
@@ -474,7 +470,6 @@ private def ConfigObject mergeConfig() {
     config.merge(argsMapConfig.clover)
 
     return config
-
 }
 
 // Copied from _GrailsArgParsing.groovy since _GrailsCompile.groovy does not depend on parseArguments target
@@ -490,8 +485,8 @@ private Map parseArguments() {
     args?.tokenize().each { token ->
         def nameValueSwitch = token =~ "--?(.*)=(.*)"
         if (nameValueSwitch.matches()) { // this token is a name/value pair (ex: --foo=bar or -z=qux)
-            final def value = nameValueSwitch[0][2]
-            argsMap[nameValueSwitch[0][1]] = "false".equalsIgnoreCase(value) ? false : value;
+            final value = nameValueSwitch[0][2]
+            argsMap[nameValueSwitch[0][1]] = "false".equalsIgnoreCase(value) ? false : value
         }
         else {
             def nameOnlySwitch = token =~ "--?(.*)"

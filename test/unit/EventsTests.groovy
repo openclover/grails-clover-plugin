@@ -15,25 +15,25 @@ import org.apache.tools.ant.BuildEvent
 /**
  * Tests for some methods from _Events.groovy file
  */
-public class EventsTests extends GroovyTestCase {
+class EventsTests extends GroovyTestCase {
 
     /** Helper class for logging into buffer */
     static class StringLogger extends DefaultLogger {
         private final List<String> buffer = new LinkedList<String>()
 
-        public void log(int level, String message, Throwable t) {
-            buffer.add("log:" + message)
+        void log(int level, String message, Throwable t) {
+            buffer.add("log:$message")
         }
 
-        public void messageLogged(BuildEvent event) {
-            buffer.add("messageLogged: " + event.getMessage());
+        void messageLogged(BuildEvent event) {
+            buffer.add("messageLogged: $event.message")
         }
 
         protected void printMessage(String message, PrintStream stream, int priority) {
-            buffer.add("printMessage:" + message);
+            buffer.add("printMessage:$message")
         }
 
-        public boolean containsFragment(final String fragment) {
+        boolean containsFragment(final String fragment) {
             for (String line : buffer) {
                 if (line.indexOf(fragment) >= 0) {
                     return true
@@ -42,7 +42,7 @@ public class EventsTests extends GroovyTestCase {
             return false
         }
 
-        public void clear() {
+        void clear() {
             buffer.clear()
         }
     }
@@ -54,7 +54,7 @@ public class EventsTests extends GroovyTestCase {
     Object script
     StringLogger antBuildListener = new StringLogger()
 
-    public void setUp() {
+    void setUp() {
         ant = new GantBuilder()
         ant.project.addBuildListener(antBuildListener)
 
@@ -66,15 +66,15 @@ public class EventsTests extends GroovyTestCase {
                 grailsWorkDir: testRunTmpDir,
                 projectTargetDir: testRunTmpDir,
                 cloverPluginDir: new File(".")
-        ]);
-        GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy");
-        script = shell.run("_Events.groovy", binding);
+        ])
+        GroovyScriptEngine shell = new GroovyScriptEngine("./scripts/_Events.groovy")
+        script = shell.run("_Events.groovy", binding)
     }
 
     /**
      * Test for configureAntInstr()
      */
-    public void testConfigureAntInstr() {
+    void testConfigureAntInstr() {
         // input data
         ConfigObject clover = new ConfigObject()
         clover.preserve = true
@@ -92,7 +92,7 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Test for configureLicense() with evaluation license key
      */
-    public void testConfigureUsingEvalLicense() {
+    void testConfigureUsingEvalLicense() {
         ConfigObject config = new ConfigObject()
         String origLicenseLoc = System.properties.remove('clover.license.path')
         try {
@@ -109,7 +109,7 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Test for configureLicense()
      */
-    public void testConfigureLicense() {
+    void testConfigureLicense() {
         ConfigObject config = new ConfigObject()
         String origLicenseLoc = System.properties.remove('clover.license.path')
         try {
@@ -127,7 +127,7 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Test for createTestPattern()
      */
-    public void testCreateTestPattern() {
+    void testCreateTestPattern() {
         assertEquals "Something", script.createTestPattern("Something")
         assertEquals "Some", script.createTestPattern("SomeTests")
     }
@@ -135,7 +135,7 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Test for scanForSourceFiles
      */
-//    public void testScanForSourceFiles() {
+//    void testScanForSourceFiles() {
 //        // search for the following files
 //        //  /test
 //        //     /unit
@@ -158,10 +158,10 @@ public class EventsTests extends GroovyTestCase {
      * Test for toggleAntLogging()
      * @throws Exception
      */
-    public void testToggleAntLogging() throws Exception {
+    void testToggleAntLogging() {
         ConfigObject config = new ConfigObject()
         config.debug = true
-        int outputLevel = 0; // this gets modified by toggleAntLogging
+        int outputLevel = 0 // this gets modified by toggleAntLogging
         def logger = [setMessageOutputLevel: {outputLevel = it}] as DefaultLogger
         ant.project.addBuildListener(logger)
         script.toggleAntLogging config
@@ -173,7 +173,7 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Test for toggleCloverOn()
      */
-    public void testToggleCloverOn() {
+    void testToggleCloverOn() {
         ConfigObject cloverConfig = new ConfigObject()
         cloverConfig.on = true
         cloverConfig.initstring = "my_clover.db"
@@ -187,13 +187,13 @@ public class EventsTests extends GroovyTestCase {
     /**
      * Some calls of Clover API are made through reflections. Check
      */
-    public void testReflections() {
+    void testReflections() {
         // input data
-        List optimizables = new ArrayList()
+        List optimizables = []
         optimizables << new StringOptimizable("AbcTest")
 
         // prepare empty database and snapshot file
-        File dbFile = File.createTempFile("clover", "clover.db");
+        File dbFile = File.createTempFile("clover", "clover.db")
         dbFile.delete()
         File snapshotFile = File.createTempFile("clover", "clover.snapshot")
         snapshotFile.delete()
