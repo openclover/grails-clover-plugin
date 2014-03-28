@@ -230,14 +230,14 @@
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.2.4"/>
+            <param name="grails.version" value="2.2.5"/>
             <param name="project.name" value="petclinic-grails22x"/>
             <param name="test.pattern" value=""/>
             <param name="expected.coverage" value="12 classes, 48 / 112 elements"/>
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.3.5"/>
+            <param name="grails.version" value="2.3.7"/>
             <param name="project.name" value="petclinic-grails23x"/>
             <param name="test.pattern" value="org.grails.samples.**"/>
             <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
