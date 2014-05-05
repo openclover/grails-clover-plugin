@@ -14,18 +14,19 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":clover:3.3.0"
+        compile ":clover:4.0.0"
         compile ":tomcat:7.0.52.1"
         compile ":hibernate:3.6.10.10"
     }
 
     dependencies {
-        compile "com.cenqua.clover:clover:3.3.0"
+        compile "com.cenqua.clover:clover:4.0.0-SNAPSHOT"
     }
 
 }
 
 clover {
-  license.path="$userHome/clover.license"
-  instrumentLambda = "block"
+    license.path="$userHome/clover.license"
+    instrumentLambda = "block"
+    reportStyle = "adg"
 }

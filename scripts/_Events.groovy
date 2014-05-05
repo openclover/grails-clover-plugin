@@ -21,6 +21,7 @@ defCloverIncludes = ["**/*.groovy", "**/*.java"]
 defCloverExcludes = ["**/conf/**", "**/plugins/**"]
 defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
 defCloverHistoryDir = "${basedir}/.cloverhistory"
+defCloverReportStyle = "adg"
 defCloverReportTitle = metadata["app.name"]
 defCloverHistorical = true // by default, we will generate a historical report.
 defCloverSnapshotFile = new File("$projectWorkDir", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
@@ -222,6 +223,7 @@ eventTestPhasesEnd = {
 
     def historyDir = config.historydir ?: defCloverHistoryDir
     def reportLocation = config.reportdir ?: defCloverReportDir
+    def reportStyle = config.reportStyle ?: defCloverReportStyle
 
     def historical = defCloverHistorical
     if (config.historical != null) {
@@ -243,7 +245,7 @@ eventTestPhasesEnd = {
         println "Clover: Generating report using default 'clover-report' task"
         ant.'clover-report' {
             ant.current(outfile: reportLocation, title: config.title ?: defCloverReportTitle) {
-                format(type: "html")
+                format(type: "html", reportStyle: reportStyle)
                 ant.columns {
                     lineCount()
                     filteredElements()
