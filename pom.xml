@@ -24,7 +24,7 @@
             <distribution>repo</distribution>
             <comments>
                 The Grails Clover plugin is licensed under the Apache 2.0 license. However, the Clover dependency
-                (com.cenqua.clover:clover) is commercial software. Clover is free for use for Open Source projects
+                (com.atlassian.clover:clover) is commercial software. Clover is free for use for Open Source projects
                 and non-profit organisations. For more information on Clover's licensing and pricing, please see:
                 http://www.atlassian.com/software/clover/licensing.jsp
             </comments>
@@ -53,7 +53,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cenqua.clover</groupId>
+            <groupId>com.atlassian.clover</groupId>
             <artifactId>clover</artifactId>
             <version>4.0.0</version>
             <type>jar</type>

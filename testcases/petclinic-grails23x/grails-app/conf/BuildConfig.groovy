@@ -20,7 +20,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        compile "com.cenqua.clover:clover:4.0.0-SNAPSHOT"
+        compile "com.atlassian.clover:clover:4.0.0-SNAPSHOT"
     }
 
 }
