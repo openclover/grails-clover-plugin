@@ -18,7 +18,7 @@ grails.project.dependency.resolution = {
 
         mavenLocal()    // otherwise look in the local maven repo
         mavenRepo "https://maven.atlassian.com/repository/public"
-        mavenRepo "https://maven.atlassian.com/public-snapshot/"
+        mavenRepo "https://maven.atlassian.com/content/repositories/atlassian-public-snapshot"
         mavenCentral()  // and finally in the Maven Central
     }
 
