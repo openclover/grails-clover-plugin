@@ -1,9 +1,10 @@
 package org.grails.samples
 
-/**
- */
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
 
-public class MyIntegrationTests extends GroovyTestCase
+@TestMixin(IntegrationTestMixin)
+public class MyIntegrationTests
 {
 
   public MyIntegrationTests() {
