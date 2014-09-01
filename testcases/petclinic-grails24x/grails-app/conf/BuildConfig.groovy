@@ -20,6 +20,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
+        test "org.hamcrest:hamcrest-core:1.3"
         compile "com.atlassian.clover:clover:4.0.1"
     }
 
