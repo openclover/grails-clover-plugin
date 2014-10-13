@@ -4,7 +4,7 @@
     <groupId>org.grails.plugins</groupId>
     <artifactId>clover</artifactId>
     <packaging>zip</packaging>
-    <version>4.0.2</version>
+    <version>4.0.3</version>
     <name>Clover Code Coverage for Grails</name>
     <description>\
         A plugin that integrates Clover into GRAILS projects.
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.atlassian.clover</groupId>
             <artifactId>clover</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.3</version>
             <type>jar</type>
         </dependency>
     </dependencies>-->
