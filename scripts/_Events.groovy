@@ -16,7 +16,7 @@ import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
 
 /* SOME CLOVER DEFAULT VALUES */
 
-defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "grails-app"]
+defCloverSrcDirs = ["src/java", "src/groovy", "test/unit", "test/integration", "test/functional", "grails-app"]
 defCloverIncludes = ["**/*.groovy", "**/*.java"]
 defCloverExcludes = ["**/conf/**", "**/plugins/**"]
 defCloverReportDir = "${projectTargetDir}/clover/report" // flim-flamming between projectWorkDir and build. build is consistent
