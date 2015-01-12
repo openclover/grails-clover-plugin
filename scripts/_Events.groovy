@@ -1,8 +1,6 @@
 import org.apache.tools.ant.BuildLogger
 import org.apache.tools.ant.Project
 
-import org.codehaus.groovy.grails.test.GrailsTestTargetPattern
-
 // Note: the GRAILS-5755 fix has solved problem with loading dependencies only partially:
 //  - we don't have to load classes manually using 'classLoader.loadClass(name)' but
 //  - during plugin installation via 'grails install-plugin' clover.jar is still not available
@@ -27,6 +25,23 @@ defCloverHistorical = true // by default, we will generate a historical report.
 defCloverSnapshotFile = new File("$projectWorkDir", "clover.snapshot") // this location can be overridden via the -clover.snapshotLocation argument
 
 defStoredTestTargetPatterns = []
+
+/* HELPER METHODS */
+
+/**
+ * Return Class 'org.codehaus.groovy.grails.test.GrailsTestTargetPattern' (grails 2.4.3 and older) or
+ * 'org.grails.test.GrailsTestTargetPattern' (grails 2.4.4 and newer)
+ *
+ * @return Class
+ * @throws ClassNotFoundException if none of two names is found
+ */
+Class getGrailsTestTargetPatternClass() {
+    try {
+        return Class.forName("org.codehaus.groovy.grails.test.GrailsTestTargetPattern")
+    } catch (ClassNotFoundException ex) {
+        return Class.forName("org.grails.test.GrailsTestTargetPattern")
+    }
+}
 
 /* EVENT HANDLERS */
 
@@ -73,7 +88,9 @@ eventSetClasspath = {URLClassLoader rootLoader ->
 eventTestPhasesStart = {phase ->
 
 //  binding.variables.each { println it.key + " = " + it.value } // dumps all available vars and their values
-    defStoredTestTargetPatterns = testNames.collect { String it -> new GrailsTestTargetPattern(it) } as GrailsTestTargetPattern[]
+    defStoredTestTargetPatterns = testNames.collect {
+        String it -> getGrailsTestTargetPatternClass().newInstance(it)
+    }
 }
 
 class FileOptimizable /* Cannot declare 'implements com.atlassian.clover.api.optimization.Optimizable' due to
@@ -175,11 +192,11 @@ eventTestCompileEnd = { type ->
 
         List optimizedTests = optimizer.optimizeObjects(optimizables)
 
-        final List<GrailsTestTargetPattern> optimizedTestTargetPatterns = new LinkedList<GrailsTestTargetPattern>()
+        final List/*<GrailsTestTargetPattern>*/ optimizedTestTargetPatterns = new LinkedList/*<GrailsTestTargetPattern>*/()
         optimizedTests.each {
             // String className = it.getName()
             final String className = (String)it.getClass().getMethod("getName").invoke(it)
-            optimizedTestTargetPatterns << new GrailsTestTargetPattern(createTestPattern(className))
+            optimizedTestTargetPatterns << getGrailsTestTargetPatternClass().newInstance(createTestPattern(className))
         }
 
         println("Clover: Test Optimization selected " + optimizedTestTargetPatterns.size() + " out of " + optimizables.size() + " tests for execution")
@@ -188,7 +205,7 @@ eventTestCompileEnd = { type ->
         }
 
         // Set variable read by _GrailsTest.groovy
-        testTargetPatterns = optimizedTestTargetPatterns as GrailsTestTargetPattern[]
+        testTargetPatterns = optimizedTestTargetPatterns.toArray() /*as GrailsTestTargetPattern[]*/
     }
 }
 
@@ -196,7 +213,7 @@ private String createTestPattern(String name) {
     return name.endsWith("Tests") ? name.substring(0, name.lastIndexOf("Tests")) : name
 }
 
-private List<File> scanForSourceFiles(GrailsTestTargetPattern targetPattern, Binding binding, String phaseName) {
+private List<File> scanForSourceFiles(Object/*GrailsTestTargetPattern*/ targetPattern, Binding binding, String phaseName) {
     def sourceFiles = []
     def resolveResources = binding['resolveResources']
     def testSuffixes = ['']
