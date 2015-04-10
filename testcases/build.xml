@@ -8,13 +8,13 @@
     <!-- ========================================================================================= -->
 
     <!-- Enter a Clover-for-Grails version being tested. It will be downloaded from ~/.m2 cache    -->
-    <property name="grails.clover.version" value="3.3.0"/>
+    <property name="grails.clover.version" value="4.0.3"/>
 
     <!-- Enter a Clover Core version being used by Clover-for-Grails. It must be the same number
     as defined in <grails>/grails-app/conf/BuildConfig.groovy clover.core.version -->
-    <property name="clover.core.version" value="3.3.0"/>
+    <property name="clover.core.version" value="4.0.3"/>
 
-    <!-- Location of the licese to be used for testing -->
+    <!-- Location of the license to be used for testing -->
     <property name="clover.license.file" location="${user.home}/clover.license"/>
 
     <!-- Uncomment to have report launched in a web browser
@@ -33,7 +33,7 @@
 
     <!-- Location where we have Grails binaries archives to unpack -->
     <property name="grails.plugin.file" location="${maven.repository.home}/org/grails/plugins/clover/${grails.clover.version}/clover-${grails.clover.version}.zip"/>
-    <property name="clover.core.file" location="${maven.repository.home}/com/cenqua/clover/clover/${clover.core.version}/clover-${clover.core.version}.jar"/>
+    <property name="clover.core.file" location="${maven.repository.home}/com/atlassian/clover/clover/${clover.core.version}/clover-${clover.core.version}.jar"/>
     <property environment="env"/>
 
     <target name="init">
@@ -91,7 +91,7 @@
         <!-- Copy grails plugin from $HOME/.m2 repo to our temporary .m2 repo -->
         <copy file="${grails.plugin.file}" todir="${m2.temp.dir}/org/grails/plugins/clover/${grails.clover.version}" overwrite="true"/>
         <!-- Copy clover core jar from $HOME/.m2 repo to our temporary .m2 repo -->
-        <copy file="${clover.core.file}" todir="${m2.temp.dir}/com/cenqua/clover/clover/${clover.core.version}" overwrite="true"/>
+        <copy file="${clover.core.file}" todir="${m2.temp.dir}/com/atlassian/clover/clover/${clover.core.version}" overwrite="true"/>
 
         <!-- Copy license file from $HOME to temporary home -->
         <copy file="${clover.license.file}" tofile="${grails.temp.dir}/clover.license"/>
@@ -237,11 +237,32 @@
             <param name="expected.testresults" value="7 / 9&lt;/span&gt; tests"/>
         </antcall>
         <antcall target="_test-testcase">
-            <param name="grails.version" value="2.3.7"/>
+            <param name="grails.version" value="2.3.11"/>
             <param name="project.name" value="petclinic-grails23x"/>
             <param name="test.pattern" value="org.grails.samples.**"/>
             <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
             <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
-        </antcall>       
+        </antcall>
+		<antcall target="_test-testcase">
+            <param name="grails.version" value="2.4.3"/>
+            <param name="project.name" value="petclinic-grails24x"/>
+            <param name="test.pattern" value="org.grails.samples.**"/>
+            <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
+            <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
+        </antcall>
+		<antcall target="_test-testcase">
+            <param name="grails.version" value="2.5.0"/>
+            <param name="project.name" value="helloworld-grails25x"/>
+            <param name="test.pattern" value="org.grails.samples.**"/>
+            <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
+            <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
+        </antcall>
+		<antcall target="_test-testcase">
+            <param name="grails.version" value="3.0.1"/>
+            <param name="project.name" value="helloworld-grails30x"/>
+            <param name="test.pattern" value="org.grails.samples.**"/>
+            <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
+            <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
+        </antcall>
     </target>
 </project>
