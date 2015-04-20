@@ -1,6 +1,6 @@
 class CloverGrailsPlugin
 {
-  def version = "4.0.4"
+  def version = "4.0.5"
   def grailsVersion = "1.3.* > *"
   def pluginExcludes = [
           "samples",
