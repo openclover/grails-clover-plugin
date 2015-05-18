@@ -1,7 +1,5 @@
-import com.cenqua.java.ImJava
+import helloworld.ImJava
 
-/**
- */
 public class JavaGroovyTests extends GroovyTestCase {
 
 

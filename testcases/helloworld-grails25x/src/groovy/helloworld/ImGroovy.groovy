@@ -1,7 +1,5 @@
-package com.cenqua.sample
+package helloworld
 
-/**
- */
 class ImGroovy {
 
     public void foo() {
