@@ -3,6 +3,8 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 grails.project.work.dir = "target/work"
+grails.project.target.level = 1.6
+grails.project.source.level = 1.6
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 grails.project.dependency.resolver = "maven" // or ivy
@@ -48,6 +50,7 @@ grails.project.dependency.resolution = {
         compile ":asset-pipeline:2.1.5"
         compile ":clover:4.0.4"
 
+
         // plugins needed at runtime but not for compilation
         runtime ":hibernate4:4.3.8.1" // or ":hibernate:3.6.10.18"
         runtime ":database-migration:1.4.0"
@@ -60,7 +63,6 @@ grails.project.dependency.resolution = {
         //compile ":handlebars-asset-pipeline:1.3.0.3"
     }
 }
-
 clover {
     license.path="$userHome/clover.license"
     instrumentLambda = "block"
