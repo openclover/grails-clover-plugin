@@ -1,6 +1,6 @@
-package com.cenqua.java;
+package helloworld;
 
-import com.cenqua.sample.ImGroovy;
+import helloworld.ImGroovy;
 
 public class ImJava {
 

@@ -9,10 +9,10 @@ public class MyIntegrationTests
 
   public MyIntegrationTests() {
     super();
-    setName("MyIntegrationTests");
+    setTarget("MyIntegrationTests");
   }
 
   public void testMyWebUi() {
-    println "Running test: ${getName()}"
+    println "Running test: ${getTarget()}"
   }
 }
