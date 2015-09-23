@@ -194,26 +194,6 @@
     </target>
 
     <target name="test" depends="init">
-        <!-- Grails 1.x -->
-        <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.0"/>
-            <param name="project.name" value="petclinic"/>
-            <param name="expected.coverage" value="12 classes, 64 / 123 elements"/>
-            <param name="expected.testresults" value="9 / 9"/>
-        </antcall>
-        <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.9"/>
-            <param name="project.name" value="weceem"/>
-            <param name="expected.coverage" value="61 classes, 1 888 / 4 603 elements"/>
-            <param name="expected.testresults" value="58 / 58"/>
-        </antcall>
-        <antcall target="_test-testcase">
-            <param name="grails.version" value="1.3.9"/>
-            <param name="project.name" value="daily-groove"/>
-            <param name="expected.coverage" value="6 classes, 22 / 95 elements"/>
-            <param name="expected.testresults" value="5 / 5 tests"/>
-        </antcall>
-        
         <!-- Grails 2.x -->
         <antcall target="_test-testcase">
             <param name="grails.version" value="2.0.4"/>
