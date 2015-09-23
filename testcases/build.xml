@@ -196,6 +196,13 @@
     <target name="test" depends="init">
         <!-- Grails 2.x -->
         <antcall target="_test-testcase">
+            <param name="grails.version" value="2.0.0"/>
+            <param name="project.name" value="petclinic-grails20x"/>
+            <param name="test.pattern" value=""/>
+            <param name="expected.coverage" value="18 classes, 106 / 204 elements"/>
+            <param name="expected.testresults" value="9 / 9&lt;/span&gt; tests"/>
+        </antcall>
+        <antcall target="_test-testcase">
             <param name="grails.version" value="2.0.4"/>
             <param name="project.name" value="petclinic-grails20x"/>
             <param name="test.pattern" value=""/>
