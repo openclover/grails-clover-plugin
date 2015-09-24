@@ -231,25 +231,25 @@
             <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
         </antcall>
 		<antcall target="_test-testcase">
-            <param name="grails.version" value="2.4.4"/>
+            <param name="grails.version" value="2.4.5"/>
             <param name="project.name" value="petclinic-grails24x"/>
             <param name="test.pattern" value="org.grails.samples.**"/>
             <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
             <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
         </antcall>
 		<antcall target="_test-testcase">
-            <param name="grails.version" value="2.5.0"/>
+            <param name="grails.version" value="2.5.1"/>
             <param name="project.name" value="helloworld-grails25x"/>
             <param name="test.pattern" value="org.grails.samples.**"/>
             <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
             <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
         </antcall>
-		<antcall target="_test-testcase">
-            <param name="grails.version" value="3.0.1"/>
-            <param name="project.name" value="helloworld-grails30x"/>
-            <param name="test.pattern" value="org.grails.samples.**"/>
-            <param name="expected.coverage" value="12 classes, 43 / 112 elements"/>
-            <param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>
-        </antcall>
+		<!--<antcall target="_test-testcase">-->
+            <!--<param name="grails.version" value="3.0.1"/>-->
+            <!--<param name="project.name" value="helloworld-grails30x"/>-->
+            <!--<param name="test.pattern" value="org.grails.samples.**"/>-->
+            <!--<param name="expected.coverage" value="12 classes, 43 / 112 elements"/>-->
+            <!--<param name="expected.testresults" value="6 / 8&lt;/span&gt; tests"/>-->
+        <!--</antcall>-->
     </target>
 </project>
