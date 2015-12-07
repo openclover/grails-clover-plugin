@@ -48,7 +48,7 @@ grails.project.dependency.resolution = {
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
         test "org.grails:grails-datastore-test-support:1.0-grails-2.3"
 
-        compile 'com.atlassian.clover:clover:4.1.1'
+        compile 'com.atlassian.clover:clover:4.2.0-SNAPSHOT'
     }
 
     plugins {

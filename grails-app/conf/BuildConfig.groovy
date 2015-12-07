@@ -3,7 +3,7 @@ grails.project.work.dir = "target"
 clover {
     debug = false
     on = false
-    core.version = "com.atlassian.clover:clover:4.1.1"
+    core.version = "com.atlassian.clover:clover:4.2.0-SNAPSHOT"
     license.path = "clover.license"
 }
 

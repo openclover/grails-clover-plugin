@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
           exclude "resources"
         }
         runtime ":hibernate:1.3.8"
-        build ":clover:4.1.1"
+        build ":clover:4.2.0-SNAPSHOT"
         build ":tomcat:1.3.8"
     }
     dependencies {
