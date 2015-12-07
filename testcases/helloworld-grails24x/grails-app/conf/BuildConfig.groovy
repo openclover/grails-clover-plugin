@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.29'
         // runtime 'org.postgresql:postgresql:9.3-1101-jdbc41'
-        compile 'com.atlassian.clover:clover:4.0.6'
+        compile 'com.atlassian.clover:clover:4.1.1'
         test "org.grails:grails-datastore-test-support:1.0.2-grails-2.4"
     }
 
@@ -48,7 +48,7 @@ grails.project.dependency.resolution = {
         compile ":scaffolding:2.1.2"
         compile ':cache:1.1.8'
         compile ":asset-pipeline:2.1.5"
-        compile ":clover:4.0.6"
+        compile ":clover:4.1.1"
 
 
         // plugins needed at runtime but not for compilation
