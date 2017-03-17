@@ -333,7 +333,6 @@ def launchReport(reportLocation) {
 }
 
 def toggleCloverOn(ConfigObject clover) {
-    configureLicense(clover)
 
     ant.taskdef(resource: 'cloverlib.xml')
     ant.'clover-env'()
@@ -413,43 +412,6 @@ private configureAntInstr(ConfigObject clover, antConfig) {
 
             antConfig.invokeMethod(setter, val)
         }
-    }
-}
-
-private configureLicense(ConfigObject clover) {
-// the directories to search for a clover.license file
-    final String[] licenseSearchPaths = ["${userHome}", "${basedir}", "${basedir}/etc", "${grailsWorkDir}"]
-
-    // the name of the system property that holds the clover license file
-    final LICENSE_PROP = 'clover.license.path'
-
-    final license
-    if (clover.license.path) {
-        license = clover.license.path
-    } else {
-        licenseSearchPaths.each {
-            final String licensePath = "${it}/clover.license"
-            if (new File(licensePath).exists()) {
-                license = licensePath
-                return
-            }
-        }
-    }
-
-    // check for a bundled eval clover license
-    def cloverPluginDir = binding.variables["cloverPluginDir"]
-    final File evalLicense = new File(cloverPluginDir, "grails-app/conf/clover/clover-evaluation.license")
-    if (!license && evalLicense.exists()) {
-        license = evalLicense.getAbsolutePath()
-    }
-
-    if (!license) {
-        println """
-               Clover: License is not configured. Please define clover.license.path=/path/to/clover.license
-               in configuration in grails-app/conf/BuildConfig.groovy"""
-    } else {
-        System.setProperty(LICENSE_PROP, license)
-        println "Clover: Using Clover license path: ${System.getProperty LICENSE_PROP}"
     }
 }
 

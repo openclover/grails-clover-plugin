@@ -90,41 +90,6 @@ class EventsTests extends GroovyTestCase {
     }
 
     /**
-     * Test for configureLicense() with evaluation license key
-     */
-    void testConfigureUsingEvalLicense() {
-        ConfigObject config = new ConfigObject()
-        String origLicenseLoc = System.properties.remove('clover.license.path')
-        try {
-            script.configureLicense(config)
-            assertNotNull System.getProperty('clover.license.path')
-        }
-        finally {
-            if (origLicenseLoc) {
-                System.setProperty('clover.license.path', origLicenseLoc)
-            }
-        }
-    }
-
-    /**
-     * Test for configureLicense()
-     */
-    void testConfigureLicense() {
-        ConfigObject config = new ConfigObject()
-        String origLicenseLoc = System.properties.remove('clover.license.path')
-        try {
-            config.license.path = "/path/to/clover.license"
-            script.configureLicense(config)
-            assertEquals config.license.path, System.getProperty('clover.license.path')
-        }
-        finally {
-            if (origLicenseLoc) {
-                System.setProperty('clover.license.path', origLicenseLoc)
-            }
-        }
-    }
-
-    /**
      * Test for createTestPattern()
      */
     void testCreateTestPattern() {

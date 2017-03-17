@@ -3,8 +3,7 @@ grails.project.work.dir = "target"
 clover {
     debug = false
     on = false
-    core.version = "com.atlassian.clover:clover:4.2.0-SNAPSHOT"
-    license.path = "clover.license"
+    core.version = "org.openclover:clover:4.2.0"
 }
 
 grails.project.dependency.resolution = {
@@ -17,9 +16,6 @@ grails.project.dependency.resolution = {
         grailsCentral() // next in Grails Central (SVN + Maven)
 
         mavenLocal()    // otherwise look in the local maven repo
-        mavenRepo "https://maven.atlassian.com/repository/public"
-        mavenRepo "https://maven.atlassian.com/content/repositories/atlassian-public-snapshot"
-        mavenRepo "https://maven.atlassian.com/content/repositories/atlassian-central-snapshot"
         mavenCentral()  // and finally in the Maven Central
     }
 
