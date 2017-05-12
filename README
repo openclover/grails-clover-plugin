@@ -1,12 +1,8 @@
-Clover-for-Grails plugin integrates Atlassian Clover with the Grails framework. 
+Clover-for-Grails plugin integrates OpenClover with the Grails framework.
 Project is open-source, based on the Apache License version 2.0. 
 
-Documentation: http://confluence.atlassian.com/display/CLOVER/Clover+Documentation+Home
+Documentation: http://openclover.org
 
-Issue tracker: http://jira.atlassian.com/browse/CLOV (report under the "Grails Plugin" component)
-
-Technical support: http://support.atlassian.com
+Issue tracker: http://bitbucket.org/openclover/clover/issues
 
 Download page: http://grails.org/plugin/clover
-
-Clover home page: http://www.atlassian.com/clover 
