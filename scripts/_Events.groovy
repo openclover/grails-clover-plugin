@@ -335,7 +335,6 @@ def launchReport(reportLocation) {
 def toggleCloverOn(ConfigObject clover) {
 
     ant.taskdef(resource: 'cloverlib.xml')
-    ant.'clover-env'()
 
     // create an AntInstrumentationConfig object, and set this on the ant project
     def antConfig = com.atlassian.clover.ant.tasks.AntInstrumentationConfig.newInstance(ant.project)
