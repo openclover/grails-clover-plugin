@@ -3,7 +3,7 @@ grails.project.work.dir = "target"
 clover {
     debug = false
     on = false
-    core.version = "org.openclover:clover:4.3.0"
+    core.version = "org.openclover:clover:4.3.1"
 }
 
 grails.project.dependency.resolution = {
