@@ -14,9 +14,9 @@ class CloverGrailsPlugin
 
   def author = "OpenClover.org"
   def authorEmail = "support@openclover.org"
-  def title = "OpenClover Code Coverage for Grails"
+  def title = "OpenClover Code Coverage for Grails 2"
   def description = '''\
-A plugin that integrates OpenClover into Grails projects.
+A plugin that integrates OpenClover into Grails 2 projects.
 OpenClover is a code coverage tool that produces beautiful reports which are highly configurable and extensible.
 OpenClover not only reports which lines of code were executed during a test run, it also reports which tests hit which lines of code.
 OpenClover's reports include:
