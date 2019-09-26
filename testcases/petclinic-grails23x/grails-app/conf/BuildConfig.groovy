@@ -14,14 +14,14 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":clover:4.2.0"
+        compile ":clover:4.4.0"
         compile ":tomcat:7.0.54"
         compile ":hibernate:3.6.10.16"
     }
 
     dependencies {
         test "org.hamcrest:hamcrest-core:1.3"
-        compile "org.openclover:clover:4.2.0"
+        compile "org.openclover:clover:4.4.0"
     }
 
 }
